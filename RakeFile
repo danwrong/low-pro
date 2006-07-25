@@ -1,0 +1,17 @@
+require 'rake'
+
+desc 'Package Low Pro for distribution.'
+task :dist => :pack do
+end
+
+desc 'Delete all files from dist.'
+task :clean do
+end
+
+desc 'Compiles JS into a single file.'
+task :build => :clean do
+end
+
+desc 'Uses packer to compact the build js file.'
+task :pack => :build do
+end
