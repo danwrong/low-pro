@@ -8,7 +8,9 @@ Object.extend(Event, {
     this._readyCallbacks.each(function(f) { f() });
     this._readyCallbacks = null;
 },
-  onDOMReady : function(f) {
+  onReady : function(f) {
+    if (this._domReady.done) return f();
+    
     if (!this._readyCallbacks) {
       var domReady = this._domReady.bind(this);
       
@@ -35,3 +37,5 @@ Object.extend(Event, {
     Event._readyCallbacks.push(f);
   }
 });
+
+Event.observe(window, 'load', function() { Event._domReady.done = true });
