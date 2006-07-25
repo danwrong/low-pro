@@ -3,7 +3,7 @@ Event.addBehavior = function(rules) {
   Object.extend(ab.rules, rules);
   
   if (ab.autoTrigger) {
-    var init = ab.load.bind(selectors);
+    var init = ab.load.bind(ab);
     if (this.onReady) this.onReady(init);
     else this.observe(window, 'load', init);
   }

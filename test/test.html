@@ -10,40 +10,51 @@
 	<script src="lowpro.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" charset="utf-8">
 		Event.onReady(function() {
-			Event.observe('wank', 'click', function() { alert('dddd') });
-			
-			$$('div').each(function(el) {
-				el.observe('click', function() { alert('new shit' + this); })
-			});
+			$$('h1').first().innerHTML += ' (Version ' + LowPro.Version + ')'; 
+		});
+	
+		Event.onReady(function() {
+			$('test1').addClassName('boo');	
+		});
+		
+		Event.addBehavior({
+			'.fing' : function() {
+				this.addClassName('boo');
+			},
+			'#test2 li:click' : function() {
+				this.addClassName('bii');
+			},
+			'#fong:mouseover' : function() {
+				this.addClassName('goo');
+			},
+			'#fong:mouseout' : function() {
+				this.removeClassName('goo');
+			}
 		});
 	</script>
 	<style type="text/css" media="screen">
-		.boo {
-			color : red;
-		}
+		.boo { color : red; }
+		.bii { color : blue; }
+		.goo { color : green; }
 	</style>
 	
 </head>
 
 <body>
-<div id="wank">Thing</div>
-<div>Thing</div>
-<div>Thing</div>
-<div>Thing</div>
-<div>Thing</div>
-<div>Thing</div>
-<div class="bing">Thing</div>
-<div>Thing</div>
-<div>Thing</div>
-<div>Thing</div>
-<div>Thing</div>
-<div>Thing</div>
-<div>Thing</div>
-<div>Thing</div>
-<div>Thing</div>
-<div>Thing</div>
-<div>Thing</div>
-<div>Thing</div>
 
+<h1>LowPro Test Suite</h1>
+
+<h2>onReady</h2>
+
+<p id="test1">This para should be red as soon as the page appears.</p>
+<button onclick="Event.onReady(function() { alert('Test passed'); })">Click this button to test if onReady triggers after page load.</button>
+
+<h2>Event Extensions</h2>
+
+<h2>addBehavior</h2>
+<ul id="test2">
+	<li class="fing">This should be red and go blue when you click it.</li>
+	<li id="fong">This should go green when you roll over and blue when you click.</li>
+</ul>
 </body>
 </html>
