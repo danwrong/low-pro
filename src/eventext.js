@@ -19,6 +19,6 @@ Object.extend(Event, {
     this.observers.each(function(cache) {
       if (cache[0] == element && cache[1] == event)
         cache[2].call(element, fakeEvent);
-    })
+    });
   }
 });

@@ -4,7 +4,7 @@ Event.addBehavior = function(rules) {
   
   if (ab.autoTrigger) {
     var init = ab.load.bind(selectors);
-    if (this.onDOMReady) this.onDOMReady(init);
+    if (this.onReady) this.onReady(init);
     else this.observe(window, 'load', init);
   }
   
@@ -13,7 +13,7 @@ Event.addBehavior = function(rules) {
   });
   
   ab.autoTrigger = ab.reassignAfterAjax = false;
-}
+};
 
 Object.extend(Event.addBehavior, {
   rules : {}, cache : [],
@@ -41,7 +41,7 @@ Object.extend(Event.addBehavior, {
   unload : function() {
     this.cache.each(function(c) {
       Event.stopObserving.apply(Event, c);
-    })
+    });
   }
   
 });

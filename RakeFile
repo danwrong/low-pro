@@ -3,14 +3,19 @@ require 'rubygems'
 require 'zip/zip'
 require 'fileutils'
 
+def file_list(dir, *files)
+  files.collect { |f| dir + "/#{f}" }
+end
+
 ROOT = File.dirname(__FILE__)
 SRC = ROOT + '/src'
 DIST = ROOT + '/dist'
 TEST = ROOT + '/test'
 DOC = ROOT + '/doc'
 
-SOURCE_LIST = Dir[SRC + '/**/*.js']
-DIST_LIST = [DIST + '/lowpro.js', DIST + '/README']
+SOURCE_LIST = file_list SRC, 'lowpro.js', 'domready.js', 'eventext.js', 'eventselectors.js', 'selector.js'
+
+DIST_LIST = file_list DIST, 'lowpro.js', 'README'
 
 task :default => :dist
 
@@ -52,4 +57,9 @@ task :pack => :build do
   `~/scripts/jspack -i #{DIST + '/lowpro.full.js'} -o #{DIST + '/lowpro.js'} -e62`
   orig, packed = File.size(DIST + '/lowpro.full.js'), File.size(DIST + '/lowpro.js')
   puts "Original: #{orig} / Packed: #{packed} (#{((packed.to_f / orig.to_f) * 100).to_i}%)"
+end
+
+desc 'Copies a built version of LowPro to test dir.'
+task :dist_to_test => :pack do
+  FileUtils.cp [DIST + '/lowpro.js', DIST + '/lowpro.full.js'], TEST
 end

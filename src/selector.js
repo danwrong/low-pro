@@ -1,5 +1,5 @@
-var SelectorLiteAddon=Class.create();
-SelectorLiteAddon.prototype = {
+LowPro.FastSelector=Class.create();
+LowPro.FastSelector.prototype = {
 
   initialize : function(stack) {
     this.r=[]; this.s=[]; this.i=0;  
@@ -59,10 +59,10 @@ SelectorLiteAddon.prototype = {
     }
   }
 
-}
+};
 
-var $$old=$$;
+LowPro.FastSelector.old$$=$$;
 function $$(a,b) {
   if (b || a.indexOf("[")>=0) return $$old.apply(this,arguments);
-  return new SelectorLiteAddon(a.split(/\s+/)).get();
+  return new LowPro.FastSelector(a.split(/\s+/)).get();
 }

@@ -7,7 +7,7 @@ Object.extend(Event, {
     
     this._readyCallbacks.each(function(f) { f() });
     this._readyCallbacks = null;
-},
+  },
   onReady : function(f) {
     if (this._domReady.done) return f();
     
@@ -38,4 +38,5 @@ Object.extend(Event, {
   }
 });
 
+// Ensure that onReady functions called after load are just called imediately.
 Event.observe(window, 'load', function() { Event._domReady.done = true });

@@ -7,11 +7,14 @@
 
 	<title>test</title>
 	<script src="prototype.js" type="text/javascript" charset="utf-8"></script>
-	<script src="unobtrusive.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lowpro.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" charset="utf-8">
 		Event.onReady(function() {
 			Event.observe('wank', 'click', function() { alert('dddd') });
-			Event.trigger('wank', 'click');
+			
+			$$('div').each(function(el) {
+				el.observe('click', function() { alert('new shit' + this); })
+			});
 		});
 	</script>
 	<style type="text/css" media="screen">
