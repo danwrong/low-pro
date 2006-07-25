@@ -1,17 +1,53 @@
 require 'rake'
+require 'rubygems'
+require 'zip/zip'
+require 'fileutils'
+
+ROOT = File.dirname(__FILE__)
+SRC = ROOT + '/src'
+DIST = ROOT + '/dist'
+TEST = ROOT + '/test'
+DOC = ROOT + '/doc'
+
+SOURCE_LIST = Dir[SRC + '/**/*.js']
+DIST_LIST = [DIST + '/lowpro.js', DIST + '/README']
+
+task :default => :dist
 
 desc 'Package Low Pro for distribution.'
 task :dist => :pack do
+  puts 'Packaging distribution...'
+  FileUtils.cp Dir[DOC + '/**/*'], DIST
+  
+  Zip::ZipFile.open(DIST + '/lowpro.zip', Zip::ZipFile::CREATE) do |zip|
+    DIST_LIST.each do |f|
+      zip.get_output_stream(File.basename(f)) { |o| o << File.open(f).read } if File.exists? f
+    end
+  end
+  
 end
 
 desc 'Delete all files from dist.'
 task :clean do
+  puts 'Cleaning dist...'
+  FileUtils.rm Dir[DIST + '/**/*']
 end
 
 desc 'Compiles JS into a single file.'
 task :build => :clean do
+  puts 'Building script...'
+  File.open(DIST + '/lowpro.full.js', 'w') do |lowpro|
+    SOURCE_LIST.each do |src|
+      File.open(src) do |f| 
+        lowpro << f.read
+        lowpro << "\n\n"
+      end
+    end
+  end
 end
 
 desc 'Uses packer to compact the build js file.'
 task :pack => :build do
+  puts 'Building packed version...'
+  
 end

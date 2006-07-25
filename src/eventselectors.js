@@ -1,19 +1,18 @@
-// Event.addBehavior by Dan Webb based on event:Selectors by Justin Palmer
 Event.addBehavior = function(rules) {
-  var selectors = this.addBehavior;
-  Object.extend(selectors.rules, rules);
+  var ab = this.addBehavior;
+  Object.extend(ab.rules, rules);
   
-  if (selectors.autoTrigger) {
-    var init = selectors.load.bind(selectors);
+  if (ab.autoTrigger) {
+    var init = ab.load.bind(selectors);
     if (this.onDOMReady) this.onDOMReady(init);
     else this.observe(window, 'load', init);
   }
   
-  if (selectors.reassignAfterAjax) Ajax.Responders.register({
-    onComplete : function() { Event.selectors.load(); }
+  if (ab.reassignAfterAjax) Ajax.Responders.register({
+    onComplete : function() { ab.load(); }
   });
   
-  selectors.autoTrigger = selectors.reassignAfterAjax = false;
+  ab.autoTrigger = ab.reassignAfterAjax = false;
 }
 
 Object.extend(Event.addBehavior, {
@@ -29,9 +28,11 @@ Object.extend(Event.addBehavior, {
       sels.each(function(sel) {
         var parts = sel.split(':'), css = parts[0], event = parts[1];
         $$(css).each(function(element) {
-          var oel = observer.bindAsEventListener(element);
-          element.observe(event, oel);
-          Event.addBehavior.cache.push([element, event, oel]);
+          if (event) {
+            var oel = observer.bindAsEventListener(element);
+            element.observe(event, oel);
+            Event.addBehavior.cache.push([element, event, oel]);
+          } else observer.call(element);
         })
       });
     }
