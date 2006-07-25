@@ -49,5 +49,7 @@ end
 desc 'Uses packer to compact the build js file.'
 task :pack => :build do
   puts 'Building packed version...'
-  
+  `~/scripts/jspack -i #{DIST + '/lowpro.full.js'} -o #{DIST + '/lowpro.js'} -e62`
+  orig, packed = File.size(DIST + '/lowpro.full.js'), File.size(DIST + '/lowpro.js')
+  puts "Original: #{orig} / Packed: #{packed} (#{((packed.to_f / orig.to_f) * 100).to_i}%)"
 end
