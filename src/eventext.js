@@ -1,15 +1,20 @@
 // Extend Element with observe and stopObserving.
-Element.addMethods({
+(function() {
+  var extensions = {
+
+    observe : function(el, event, callback) {
+      Event.observe.call(Event, el, event, callback);
+    },
+
+    stopObserving : function(el, event, callback) {
+      Event.stopObserving.call(Event, el, event, callback);
+    }
+
+  };
   
-  observe : function(el, event, callback) {
-    Event.observe.call(Event, el, event, callback);
-  },
-  
-  stopObserving : function(el, event, callback) {
-    Event.stopObserving.call(Event, el, event, callback);
-  }
-  
-});
+  if (Element.addMethods) Element.addMethods(extensions);
+  else Object.extend(Element.Methods, extensions);
+})();
 
 // Make sure this always refers to the element
 Event._oldObserveAndCache = Event._observeAndCache;
