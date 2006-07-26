@@ -29,10 +29,9 @@ Object.extend(Event.addBehavior, {
         var parts = sel.split(':'), css = parts[0], event = parts[1];
         $$(css).each(function(element) {
           if (event) {
-            var oel = observer.bindAsEventListener(element);
-            element.observe(event, oel);
-            Event.addBehavior.cache.push([element, event, oel]);
-          } else observer.call(element);
+            $(element).observe(event, observer);
+            Event.addBehavior.cache.push([element, event, observer]);
+          } else observer.call($(element));
         })
       });
     }
