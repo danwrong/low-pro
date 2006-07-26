@@ -13,7 +13,7 @@ DIST = ROOT + '/dist'
 TEST = ROOT + '/test'
 DOC = ROOT + '/doc'
 
-SOURCE_LIST = file_list SRC, 'lowpro.js', 'domready.js', 'eventext.js', 'eventselectors.js', 'selector.js'
+SOURCE_LIST = file_list SRC, 'lowpro.js', 'domready.js', 'eventext.js', 'behavior.js', 'selector.js'
 
 DIST_LIST = file_list DIST, 'lowpro.js', 'README'
 

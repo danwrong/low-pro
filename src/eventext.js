@@ -11,6 +11,13 @@ Element.addMethods({
   
 });
 
+// Make sure this always refers to the element
+Event._oldObserveAndCache = Event._observeAndCache;
+Event._observeAndCache = function(element, name, observer, useCapture) {
+  observer = observer.bindAsEventListener($(element));
+  Event._oldObserveAndCache(element, name, observer, useCapture);
+};
+
 // Allows you to trigger an event element.  
 Object.extend(Event, {
   trigger : function(element, event, fakeEvent) {
