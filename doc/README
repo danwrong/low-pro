@@ -1,6 +1,10 @@
 Low Pro - Unobtrusive Scripting Extensions to Prototype
 -------------------------------------------------------
 
+Version: 0.1
+Author: Dan Webb (dan@danwebb.net)
+Project Home: http://www.danwebb.net/lowpro/
+
 Low Pro is a small JavaScript library built as an extension to Prototype that makes unobtrusive DOM scripting much easier.  Here's a rundown of the functionality:
 
 * Optimsed $$ - function for much fast CSS node selection.
@@ -10,7 +14,9 @@ Low Pro is a small JavaScript library built as an extension to Prototype that ma
 * callback scope fixed for Event.observe - this always refers to the element in event handlers.
 * Event.trigger() - trigger an elements event handlers for a specific event.
 
-Please mail any feedback to dan@vivabit.com
+Tested in: Firefox 1.5 (PC/Mac), Safari 2, IE 6, Opera 9 (PC/Mac)
+
+Please mail any feedback to dan@danwebb.net
 
 
 Acknowledgments / Credits
