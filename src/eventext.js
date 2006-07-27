@@ -2,18 +2,15 @@ if (!Element.addMethods) Element.addMethods = function(o) { Object.extend(Elemen
 
 // Extend Element with observe and stopObserving.
 Element.addMethods({
-  
   observe : function(el, event, callback) {
     Event.observe.call(Event, el, event, callback);
   },
-  
   stopObserving : function(el, event, callback) {
     Event.stopObserving.call(Event, el, event, callback);
   }
-  
 });
 
-// Make sure this always refers to the element
+// Make sure this always refers to the element in all browsers.
 Event._oldObserveAndCache = Event._observeAndCache;
 Event._observeAndCache = function(element, name, observer, useCapture) {
   observer = observer.bindAsEventListener(element);

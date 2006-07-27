@@ -1,3 +1,16 @@
+// Based on event:Selectors by Justin Palmer
+// http://encytemedia.com/event-selectors/
+//
+// Usage:
+//
+// Event.addBehavior({
+//      "selector:event" : function(event) { /* event handler.  this refers to the element. */ },
+//      "selector" : function() { /* runs function on dom ready.  this refers to the element. */ }
+//      ...
+// });
+//
+// Multiple calls will add to exisiting rules.  Event.addBehavior.reassignAfterAjax and
+// Event.addBehavior.autoTrigger can be adjusted to needs.
 Event.addBehavior = function(rules) {
   var ab = this.addBehavior;
   Object.extend(ab.rules, rules);
@@ -9,7 +22,7 @@ Event.addBehavior = function(rules) {
   }
   
   if (ab.reassignAfterAjax) Ajax.Responders.register({
-    onComplete : function() { ab.load(); }
+    onComplete : function() { setTimeout(function() { ab.load() }, 10) }
   });
   
   ab.autoTrigger = ab.reassignAfterAjax = false;

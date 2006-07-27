@@ -15,7 +15,7 @@ DOC = ROOT + '/doc'
 
 SOURCE_LIST = file_list SRC, 'lowpro.js', 'domready.js', 'eventext.js', 'behavior.js', 'selector.js'
 
-DIST_LIST = file_list DIST, 'lowpro.js', 'README'
+DIST_LIST = file_list DIST, 'lowpro.js', 'lowpro.packed.js', 'README'
 
 task :default => :dist
 
@@ -41,7 +41,7 @@ end
 desc 'Compiles JS into a single file.'
 task :build => :clean do
   puts 'Building script...'
-  File.open(DIST + '/lowpro.full.js', 'w') do |lowpro|
+  File.open(DIST + '/lowpro.js', 'w') do |lowpro|
     SOURCE_LIST.each do |src|
       File.open(src) do |f| 
         lowpro << f.read
@@ -54,12 +54,12 @@ end
 desc 'Uses packer to compact the build js file.'
 task :pack => :build do
   puts 'Building packed version...'
-  `~/scripts/jspack -i #{DIST + '/lowpro.full.js'} -o #{DIST + '/lowpro.js'} -e62`
-  orig, packed = File.size(DIST + '/lowpro.full.js'), File.size(DIST + '/lowpro.js')
+  `~/scripts/jspack -i #{DIST + '/lowpro.js'} -o #{DIST + '/lowpro.packed.js'} -e62`
+  orig, packed = File.size(DIST + '/lowpro.js'), File.size(DIST + '/lowpro.packed.js')
   puts "Original: #{orig} / Packed: #{packed} (#{((packed.to_f / orig.to_f) * 100).to_i}%)"
 end
 
 desc 'Copies a built version of LowPro to test dir.'
 task :dist_to_test => :pack do
-  FileUtils.cp [DIST + '/lowpro.js', DIST + '/lowpro.full.js'], TEST
+  FileUtils.cp [DIST + '/lowpro.js', DIST + '/lowpro.packed.js'], TEST
 end

@@ -1,11 +1,25 @@
 Low Pro - Unobtrusive Scripting Extensions to Prototype
 -------------------------------------------------------
 
+Low Pro is a small JavaScript library built as an extension to Prototype that makes unobtrusive DOM scripting much easier.  Here's a rundown of the functionality:
+
+* Optimsed $$ - function for much fast CSS node selection.
+* Event.onReady() - add callbacks that execute as soon as the DOM is ready.
+* Event.addBehavior() - add behaviors to elements declaritively using CSS selectors.
+* $('element').observe() - event handling methods added to elements.
+* callback scope fixed for Event.observe - this always refers to the element in event handlers.
+* Event.trigger() - trigger an elements event handlers for a specific event.
+
+Please mail any feedback to dan@vivabit.com
 
 
 Acknowledgments / Credits
 -------------------------
 
-onReady and packer - Dean Edwards + ***
-addBehaviour - Justin Palmer
-SelectorLite - ***
+This library is based on the work of many great JavaScript programmers:
+
+Dean Edwards, John Resig and Matthias Miller: dom ready work.
+Justin Palmer: event:Selectors which is the basis for addBehavior.
+Sylvian Zimmer: $$ optimisation.
+
+Cheers!

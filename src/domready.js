@@ -1,3 +1,6 @@
+// Adapted from DOM Ready extension by Dan Webb
+// http://www.vivabit.com/bollocks/2006/06/21/a-dom-ready-extension-for-prototype
+// which was based on work by Matthias Miller, Dean Edwards and John Resig
 Object.extend(Event, {
   _domReady : function() {
     if (arguments.callee.done) return;

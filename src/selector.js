@@ -1,3 +1,6 @@
+// Original code by Sylvian Zimmer
+// http://www.sylvainzimmer.com/index.php/archives/2006/06/25/speeding-up-prototypes-selector/
+// Optimises execution speed of the $$ function.
 LowPro.FastSelector=Class.create();
 LowPro.FastSelector.prototype = {
 
