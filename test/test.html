@@ -29,6 +29,9 @@
 			},
 			'#fong:mouseout' : function() {
 				this.removeClassName('goo');
+			},
+			'#stopme:click' : function(e) {
+				return false;
 			}
 		});
 	</script>
@@ -51,10 +54,13 @@
 
 <h2>Event Extensions</h2>
 
+<p><a id="stopme" href="http://www.google.com">This link should do nothing</a></p>
+
 <h2>addBehavior</h2>
 <ul id="test2">
 	<li class="fing">This should be red and go blue when you click it.</li>
 	<li id="fong">This should go green when you roll over and blue when you click.</li>
 </ul>
+
 </body>
 </html>

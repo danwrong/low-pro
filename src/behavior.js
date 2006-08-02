@@ -21,8 +21,11 @@ Event.addBehavior = function(rules) {
     else this.observe(window, 'load', init);
   }
   
-  if (ab.reassignAfterAjax) Ajax.Responders.register({
-    onComplete : function() { setTimeout(function() { ab.load() }, 10) }
+  Ajax.Responders.register({
+    onComplete : function() { 
+      if (Event.addBehavior.reassignAfterAjax) 
+        setTimeout(function() { ab.load() }, 10);
+    }
   });
   
   ab.autoTrigger = ab.reassignAfterAjax = false;

@@ -1,71 +1,78 @@
 // Original code by Sylvian Zimmer
 // http://www.sylvainzimmer.com/index.php/archives/2006/06/25/speeding-up-prototypes-selector/
-// Optimises execution speed of the $$ function.
-LowPro.FastSelector=Class.create();
-LowPro.FastSelector.prototype = {
-
-  initialize : function(stack) {
-    this.r=[]; this.s=[]; this.i=0;  
-
-    for (var i=stack.length-1;i>=0;i--) {
-
-      var s=["*","",[]], t=stack[i], cursor=t.length-1;
+// Optimises execution speed of the $$ function.  Rewritten for readability by Justin Palmer.
+LowPro.SelectorLite = Class.create();
+LowPro.SelectorLite.prototype = {
+  initialize: function(selectors) {
+    this.results = []; 
+    this.selectors = []; 
+    this.index = 0;
+    
+    for(var i = selectors.length -1; i >= 0; i--) {
+      var params = { tag: '*', id: null, classes: [] };
+      var selector = selectors[i];
+      var needle = selector.length - 1;
       
       do {
-        var d=t.lastIndexOf("#"), p=t.lastIndexOf(".");
-        cursor=Math.max(d,p);
-
-        if (cursor==-1) s[0]=t.toUpperCase();
-        else if (d==-1 || p==cursor) s[2].push(t.substring(p+1));
-        else if (!s[1]) s[1]=t.substring(d+1);
+        var id = selector.lastIndexOf("#");
+        var klass = selector.lastIndexOf(".");
+        var cursor = Math.max(id, klass);
         
-        t=t.substring(0,cursor);
-      } while (cursor>0);
-      
-      this.s[i]=s;
+        if(cursor == -1) params.tag = selector.toUpperCase();
+        else if(id == -1 || klass == cursor) params.classes.push(selector.substring(klass + 1))
+        else if(!params.id) params.id = selector.substring(id + 1);
+        
+        selector = selector.substring(0, cursor);
+      } while(cursor > 0);
+      this.selectors[i] = params;
     }
+    
   },
-
-  get : function(root) {
-    this.explore(root || document, this.i==(this.s.length-1));
-    return this.r;
+  
+  get: function(root) {
+    this.findElements(root || document, this.index == (this.selectors.length - 1));
+    return this.results;
   },
-
-  explore : function(elt,leaf) {
-    var s=this.s[this.i], r=[];
-
-    if (s[1]) {
-      var e=$(s[1]);      
-      if (e && (s[0]=="*" || e.tagName==s[0]) && e.childOf(elt)) r=[e];
-    } else r=$A(elt.getElementsByTagName(s[0]));
-
-    if (s[2].length==1) r=r.findAll(function(o) {
-        return (o.className.indexOf(" ")==-1) ? 
-          o.className==s[2][0] : o.className.split(/\s+/).include(s[2][0]);
-    });
-    else if (s[2].length>0) r=r.findAll(function(o) {
-        if (o.className.indexOf(" ")==-1) return false;
-        else {
-          var q=o.className.split(/\s+/);
-          return s[2].all(function(c) {
-            return q.include(c);
-          });
-        }
-    });
-
-    if (leaf) this.r=this.r.concat(r);
-    else {
-      ++this.i;
-      r.each(function(o) {
-        this.explore(o,this.i==(this.s.length-1));
+  
+  findElements: function(parent, descendant) {
+    var selector = this.selectors[this.index], results = [], element;
+    if(selector.id) {
+      element = $(selector.id);
+      if(element && (selector.tag == '*' || element.tagName == selector.tag) && 
+        (element.childOf(parent))) {
+        results = [element];
+      }
+    } else {
+      results = $A(parent.getElementsByTagName(selector.tag));
+    }
+    
+    if(selector.classes.length == 1) {
+      results = results.select(function(target) {
+       return target.hasClassName(selector.classes[0]);
+      });
+    } else if(selector.classes.length > 1) {
+      results = results.select(function(target) {
+        var klasses = target.classNames();
+        return selector.classes.all(function(klass) {
+          return klasses.include(klass);
+        });
+      });
+    }
+    
+    if(descendant) {
+      this.results = this.results.concat(results);
+    } else {
+      ++this.index;
+      results.each(function(target) {
+        this.findElements(target, this.index == (this.selectors.length - 1));
       }.bind(this));
     }
   }
+}
 
-};
-
-LowPro.FastSelector.old$$=$$;
-function $$(a,b) {
-  if (b || a.indexOf("[")>=0) return $$old.apply(this,arguments);
-  return new LowPro.FastSelector(a.split(/\s+/)).get();
+LowPro.$$old=$$;
+var $$=function(a,b) {
+  if (b || a.indexOf("[")>=0) return LowPro.$$old.apply(this,arguments);
+  return new LowPro.SelectorLite(a.split(/\s+/)).get();
+  
 }

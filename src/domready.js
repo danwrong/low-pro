@@ -6,16 +6,15 @@ Object.extend(Event, {
     if (arguments.callee.done) return;
     arguments.callee.done = true;
 
-    if (this._timer)  clearInterval(this._timer);
+    if (Event._timer)  clearInterval(Event._timer);
     
-    this._readyCallbacks.each(function(f) { f() });
-    this._readyCallbacks = null;
+    Event._readyCallbacks.each(function(f) { f() });
+    Event._readyCallbacks = null;
+    
   },
   onReady : function(f) {
-    if (Event._domReady.done) return f();
-    
     if (!this._readyCallbacks) {
-      var domReady = this._domReady.bind(this);
+      var domReady = this._domReady;
       
       if (document.addEventListener)
         document.addEventListener("DOMContentLoaded", domReady, false);
@@ -24,7 +23,7 @@ Object.extend(Event, {
         /*@if (@_win32)
             document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
             document.getElementById("__ie_onload").onreadystatechange = function() {
-                if (this.readyState == "complete") domReady(); 
+                if (this.readyState == "complete") { domReady(); }
             };
         /*@end @*/
         
