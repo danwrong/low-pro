@@ -47,7 +47,10 @@ Object.extend(Event.addBehavior, {
           if (event) {
             $(element).observe(event, observer);
             Event.addBehavior.cache.push([element, event, observer]);
-          } else observer.call($(element));
+          } else {
+            if (!element.readyBehaviourApplied) observer.call($(element));
+            element.readyBehaviourApplied = true;
+          }
         })
       });
     }
