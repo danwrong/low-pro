@@ -19,6 +19,7 @@ Event.addBehavior = function(rules) {
     var init = ab.load.bind(ab);
     if (this.onReady) this.onReady(init);
     else this.observe(window, 'load', init);
+    ab.autoTrigger = false;
   }
   
   Ajax.Responders.register({
@@ -28,7 +29,6 @@ Event.addBehavior = function(rules) {
     }
   });
   
-  ab.autoTrigger = ab.reassignAfterAjax = false;
 };
 
 Object.extend(Event.addBehavior, {
