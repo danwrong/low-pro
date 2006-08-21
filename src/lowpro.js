@@ -1,2 +1,2 @@
 LowPro = {};
-LowPro.Version = '0.1';
+LowPro.Version = '0.1b';

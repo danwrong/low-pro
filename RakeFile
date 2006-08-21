@@ -3,15 +3,24 @@ require 'rubygems'
 require 'zip/zip'
 require 'fileutils'
 
-def file_list(dir, *files)
-  files.collect { |f| dir + "/#{f}" }
-end
-
 ROOT = File.dirname(__FILE__)
 SRC = ROOT + '/src'
 DIST = ROOT + '/dist'
 TEST = ROOT + '/test'
+
+def file_list(dir, *files)
+  files.collect { |f| dir + "/#{f}" }
+end
+
+def get_version_string
+  File.open(SRC + "/lowpro.js") do |f|
+    f.read.match(/LowPro\.Version\s?=\s?'([^']+)'/)
+  end
+  return $1
+end
+
 DOC = ROOT + '/doc'
+LP_VERSION = get_version_string
 
 SOURCE_LIST = file_list SRC, 'lowpro.js', 'domready.js', 'eventext.js', 'behavior.js', 'selector.js'
 
@@ -24,7 +33,7 @@ task :dist => :pack do
   puts 'Packaging distribution...'
   FileUtils.cp Dir[DOC + '/**/*'], DIST
   
-  Zip::ZipFile.open(DIST + '/lowpro.zip', Zip::ZipFile::CREATE) do |zip|
+  Zip::ZipFile.open(DIST + "/lowpro-#{LP_VERSION}.zip", Zip::ZipFile::CREATE) do |zip|
     DIST_LIST.each do |f|
       zip.get_output_stream(File.basename(f)) { |o| o << File.open(f).read } if File.exists? f
     end
