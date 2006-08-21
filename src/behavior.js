@@ -45,9 +45,12 @@ Object.extend(Event.addBehavior, {
             $(element).observe(event, observer);
             Event.addBehavior.cache.push([element, event, observer]);
           } else {
-            // TODO: ensure that each observer is called only once on each element.
-            if (observer.bind) observer.bind(element);
-            else observer.call($(element));
+            if (!element.$$assigned || !element.$$assigned.include(observer)) {
+              if (observer.bindElement) observer.bindElement(element);
+              else observer.call($(element));
+              element.$$assigned = element.$$assigned || [];
+              element.$$assigned.push(observer);
+            }
           }
         });
       });
@@ -65,7 +68,7 @@ Object.extend(Event.addBehavior, {
 Event.observe(window, 'unload', Event.addBehavior.unload.bind(Event.addBehavior));
 
 // Behaviors can be bound to elements to provide an object orientated way of controlling elements
-// and their behavior.  Use Behavior.create() to make a new behavior class then use bind() to
+// and their behavior.  Use Behavior.create() to make a new behavior class then use bindElement() to
 // glue it to an element.  Each element then gets it's own instance of the behavior and any
 // methods called onxxx are bound to the relevent event.
 //
@@ -85,7 +88,7 @@ Behavior = {
     return behavior;
   },
   ClassMethods : {
-    bind : function(element) {
+    bindElement : function(element) {
       var bound = new this;
       bound.element = $(element);
       this._bindEvents(bound);
@@ -93,7 +96,7 @@ Behavior = {
     },
     _bindEvents : function(bound) {
       for (var member in bound)
-        if (member.match(/on(.+)/) && typeof bound[member] == 'function')
+        if (member.match(/^on(.+)/) && typeof bound[member] == 'function')
           bound.element.observe(RegExp.$1, bound[member].bindAsEventListener(bound));
     }
   }
