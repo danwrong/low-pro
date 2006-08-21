@@ -16,10 +16,7 @@ Event.addBehavior = function(rules) {
   Object.extend(ab.rules, rules);
   
   if (ab.autoTrigger) {
-    var init = ab.load.bind(ab);
-    if (this.onReady) this.onReady(init);
-    else this.observe(window, 'load', init);
-    ab.autoTrigger = false;
+    this.onReady(ab.load.bind(ab));
   }
   
   Ajax.Responders.register({
@@ -48,10 +45,11 @@ Object.extend(Event.addBehavior, {
             $(element).observe(event, observer);
             Event.addBehavior.cache.push([element, event, observer]);
           } else {
+            // TODO: ensure that each observer is called only once on each element.
             if (observer.bind) observer.bind(element);
             else observer.call($(element));
           }
-        })
+        });
       });
     }
   },
@@ -70,6 +68,14 @@ Event.observe(window, 'unload', Event.addBehavior.unload.bind(Event.addBehavior)
 // and their behavior.  Use Behavior.create() to make a new behavior class then use bind() to
 // glue it to an element.  Each element then gets it's own instance of the behavior and any
 // methods called onxxx are bound to the relevent event.
+//
+// Usage:
+//
+// var MyBehavior = Behavior.create({
+//   onmouseover : function() { this.element.addClassName('bong') } 
+// });
+//
+// Event.addBehavior({ 'a.rollover' : MyBehavior });
 Behavior = {
   create : function(members) {
     var behavior = Class.create();
