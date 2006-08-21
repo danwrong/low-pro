@@ -16,6 +16,8 @@ Object.extend(Event, {
     if (!this._readyCallbacks) {
       var domReady = this._domReady;
       
+      if (domReady.done) return f();
+      
       if (document.addEventListener)
         document.addEventListener("DOMContentLoaded", domReady, false);
         

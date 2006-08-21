@@ -17,6 +17,22 @@
 			$('test1').addClassName('boo');	
 		});
 		
+		var LinkBehavior = Behavior.create({
+			initialize : function() {
+				this.count = 0;
+			},
+			onmouseover : function() {
+				this.element.addClassName('goo');
+			},
+			onmouseout : function() {
+				this.element.removeClassName('goo');
+			},
+			onclick : function() {
+				this.element.innerHTML = 'Clicks: ' + ++this.count;
+				return false;
+			}
+		});
+		
 		Event.addBehavior({
 			'.fing' : function() {
 				this.addClassName('boo');
@@ -32,7 +48,8 @@
 			},
 			'#stopme:click' : function(e) {
 				return false;
-			}
+			},
+			'#thingy' : LinkBehavior
 		});
 	</script>
 	<style type="text/css" media="screen">
@@ -61,6 +78,9 @@
 	<li class="fing">This should be red and go blue when you click it.</li>
 	<li id="fong">This should go green when you roll over and blue when you click.</li>
 </ul>
+
+<h2>Behavior Binding</h2>
+<p><a href="http://www.danwebb.net" id="thingy">Click Me</a> and I should count your clicks.</p>
 
 </body>
 </html>
