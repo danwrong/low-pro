@@ -46,7 +46,7 @@ Object.extend(Event.addBehavior, {
             Event.addBehavior.cache.push([element, event, observer]);
           } else {
             if (!element.$$assigned || !element.$$assigned.include(observer)) {
-              if (observer.bindElement) observer.bindElement(element);
+              if (observer.attach) observer.attach(element);
               else observer.call($(element));
               element.$$assigned = element.$$assigned || [];
               element.$$assigned.push(observer);
@@ -68,16 +68,16 @@ Object.extend(Event.addBehavior, {
 Event.observe(window, 'unload', Event.addBehavior.unload.bind(Event.addBehavior));
 
 // Behaviors can be bound to elements to provide an object orientated way of controlling elements
-// and their behavior.  Use Behavior.create() to make a new behavior class then use bindElement() to
+// and their behavior.  Use Behavior.create() to make a new behavior class then use attach() to
 // glue it to an element.  Each element then gets it's own instance of the behavior and any
 // methods called onxxx are bound to the relevent event.
-//
+// 
 // Usage:
-//
+// 
 // var MyBehavior = Behavior.create({
 //   onmouseover : function() { this.element.addClassName('bong') } 
 // });
-//
+
 // Event.addBehavior({ 'a.rollover' : MyBehavior });
 Behavior = {
   create : function(members) {
@@ -88,7 +88,7 @@ Behavior = {
     return behavior;
   },
   ClassMethods : {
-    bindElement : function(element) {
+    attach : function(element) {
       var bound = new this;
       bound.element = $(element);
       this._bindEvents(bound);
