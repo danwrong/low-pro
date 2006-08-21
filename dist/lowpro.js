@@ -1,5 +1,5 @@
 LowPro = {};
-LowPro.Version = '0.1';
+LowPro.Version = '0.1b';
 
 // Adapted from DOM Ready extension by Dan Webb
 // http://www.vivabit.com/bollocks/2006/06/21/a-dom-ready-extension-for-prototype
