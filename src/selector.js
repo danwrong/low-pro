@@ -1,6 +1,8 @@
 // Original code by Sylvian Zimmer
 // http://www.sylvainzimmer.com/index.php/archives/2006/06/25/speeding-up-prototypes-selector/
 // Optimises execution speed of the $$ function.  Rewritten for readability by Justin Palmer.
+// 
+// Turn off optimisation with LowPro.optimize$$ = false;
 LowPro.SelectorLite = Class.create();
 LowPro.SelectorLite.prototype = {
   initialize: function(selectors) {
@@ -71,8 +73,10 @@ LowPro.SelectorLite.prototype = {
 }
 
 LowPro.$$old=$$;
-var $$=function(a,b) {
-  if (b || a.indexOf("[")>=0) return LowPro.$$old.apply(this,arguments);
+LowPro.optimize$$ = true;
+
+function $$(a,b) {
+  if (LowPro.optimize$$ == false || b || a.indexOf("[")>=0) 
+    return LowPro.$$old.apply(this, arguments);
   return new LowPro.SelectorLite(a.split(/\s+/)).get();
-  
 }
