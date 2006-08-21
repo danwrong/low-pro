@@ -50,11 +50,11 @@ LowPro.SelectorLite.prototype = {
     
     if(selector.classes.length == 1) {
       results = results.select(function(target) {
-       return target.hasClassName(selector.classes[0]);
+       return $(target).hasClassName(selector.classes[0]);
       });
     } else if(selector.classes.length > 1) {
       results = results.select(function(target) {
-        var klasses = target.classNames();
+        var klasses = $(target).classNames();
         return selector.classes.all(function(klass) {
           return klasses.include(klass);
         });
