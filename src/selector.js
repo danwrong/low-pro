@@ -75,8 +75,8 @@ LowPro.SelectorLite.prototype = {
 LowPro.$$old=$$;
 LowPro.optimize$$ = true;
 
-function $$(a,b) {
+$$ = function(a,b) {
   if (LowPro.optimize$$ == false || b || a.indexOf("[")>=0) 
-    return LowPro.$$old.apply(this, arguments);
+    return LowPro.$$old(a, b);
   return new LowPro.SelectorLite(a.split(/\s+/)).get();
 }

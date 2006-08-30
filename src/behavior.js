@@ -81,7 +81,7 @@ Event.observe(window, 'unload', Event.addBehavior.unload.bind(Event.addBehavior)
 // Event.addBehavior({ 'a.rollover' : MyBehavior });
 Behavior = {
   create : function(members) {
-    var behavior = Class.create();
+    var behavior = Prototype.K;
     behavior.prototype.initialize = Prototype.K;
     Object.extend(behavior.prototype, members);
     Object.extend(behavior, Behavior.ClassMethods);
@@ -91,6 +91,7 @@ Behavior = {
     attach : function(element) {
       var bound = new this;
       bound.element = $(element);
+      bound.initialize.apply(bound);
       this._bindEvents(bound);
       return bound;
     },
