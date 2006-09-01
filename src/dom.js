@@ -13,6 +13,9 @@ Element.addMethods({
   },
   remove : function(element) {
     return $(element).parentNode.removeChild(element);
+  },
+  insertAfter : function(element, node) {
+    return $(element).previousSibling.inserBefore(node);
   }
 });
 

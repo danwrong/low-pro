@@ -49,7 +49,16 @@
 			'#stopme:click' : function(e) {
 				return false;
 			},
-			'#thingy' : LinkBehavior
+			'#doomed:click' : function() {
+				this.remove();
+				return false;
+			},
+			'#drop' : function() {
+				this.appendChild($ul(
+					$li('item 1'),
+					$li('item 2')
+				));
+			}
 		});
 	</script>
 	<style type="text/css" media="screen">
@@ -83,7 +92,15 @@
 <p><a href="http://www.danwebb.net" id="thingy">Click Me</a> and I should count your clicks.</p>
 
 <script type="text/javascript" charset="utf-8">
-	//Event.addBehavior({ '#thingy' : LinkBehavior });
+	Event.addBehavior({ '#thingy' : LinkBehavior });
 </script>
+
+<h2>DOM Methods</h2>
+<p><a href="http://www.danwebb.net" id="doomed">This link should be removed from the DOM when you click it.</a></p>
+
+<h2>Creating DOM Structures</h2>
+<div id="drop">
+	<p>You should see a dynamically created list below</p>
+</div>
 </body>
 </html>
