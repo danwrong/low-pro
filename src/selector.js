@@ -21,11 +21,12 @@ LowPro.SelectorLite.prototype = {
         var cursor = Math.max(id, klass);
         
         if(cursor == -1) params.tag = selector.toUpperCase();
-        else if(id == -1 || klass == cursor) params.classes.push(selector.substring(klass + 1))
+        else if(id == -1 || klass == cursor) params.classes.push(selector.substring(klass + 1));
         else if(!params.id) params.id = selector.substring(id + 1);
         
         selector = selector.substring(0, cursor);
       } while(cursor > 0);
+      
       this.selectors[i] = params;
     }
     
@@ -38,21 +39,20 @@ LowPro.SelectorLite.prototype = {
   
   findElements: function(parent, descendant) {
     var selector = this.selectors[this.index], results = [], element;
-    if(selector.id) {
+    if (selector.id) {
       element = $(selector.id);
-      if(element && (selector.tag == '*' || element.tagName == selector.tag) && 
-        (element.childOf(parent))) {
-        results = [element];
+      if (element && (selector.tag == '*' || element.tagName == selector.tag) && (element.childOf(parent))) {
+          results = [element];
       }
     } else {
       results = $A(parent.getElementsByTagName(selector.tag));
     }
     
-    if(selector.classes.length == 1) {
+    if (selector.classes.length == 1) {
       results = results.select(function(target) {
        return $(target).hasClassName(selector.classes[0]);
       });
-    } else if(selector.classes.length > 1) {
+    } else if (selector.classes.length > 1) {
       results = results.select(function(target) {
         var klasses = $(target).classNames();
         return selector.classes.all(function(klass) {
@@ -61,7 +61,7 @@ LowPro.SelectorLite.prototype = {
       });
     }
     
-    if(descendant) {
+    if (descendant) {
       this.results = this.results.concat(results);
     } else {
       ++this.index;
@@ -70,7 +70,7 @@ LowPro.SelectorLite.prototype = {
       }.bind(this));
     }
   }
-}
+};
 
 LowPro.$$old=$$;
 LowPro.optimize$$ = true;
@@ -79,4 +79,4 @@ $$ = function(a,b) {
   if (LowPro.optimize$$ == false || b || a.indexOf("[")>=0) 
     return LowPro.$$old(a, b);
   return new LowPro.SelectorLite(a.split(/\s+/)).get();
-}
+};
