@@ -1,5 +1,5 @@
 LowPro = {};
-LowPro.Version = '0.1b';
+LowPro.Version = '0.2';
 
 if (!Element.addMethods) 
   Element.addMethods = function(o) { Object.extend(Element.Methods, o) };
@@ -19,6 +19,9 @@ Element.addMethods({
   },
   remove : function(element) {
     return $(element).parentNode.removeChild(element);
+  },
+  insertAfter : function(element, node) {
+    return $(element).previousSibling.inserBefore(node);
   }
 });
 
