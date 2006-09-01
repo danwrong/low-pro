@@ -1,6 +1,3 @@
-if (!Element.addMethods) 
-  Element.addMethods = function(o) { Object.extend(Element.Methods, o) };
-
 // Extend Element with observe and stopObserving.
 Element.addMethods({
   observe : function(el, event, callback) {
