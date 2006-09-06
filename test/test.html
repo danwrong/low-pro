@@ -54,6 +54,7 @@
 				this.remove();
 				return false;
 			},
+			'#bung' : LinkBehavior,
 			'#drop' : function() {
 				this.appendChild($ul(
 					$li('item 1'),
@@ -90,11 +91,8 @@
 </ul>
 
 <h2>Behavior Binding</h2>
-<p><a href="http://www.danwebb.net" id="thingy">Click Me</a> and I should count your clicks.</p>
+<p><a href="http://www.danwebb.net" id="bung">Click Me</a> and I should count your clicks.</p>
 
-<script type="text/javascript" charset="utf-8">
-	Event.addBehavior({ '#thingy' : LinkBehavior });
-</script>
 
 <h2>DOM Methods</h2>
 <p><a href="http://www.danwebb.net" id="doomed">This link should be removed from the DOM when you click it.</a></p>

@@ -42,10 +42,10 @@ DOM.Builder = {
   },
 	tagFunc : function(tag) {
 	  return function() {
-	    var arguments, attrs, children; 
+	    var attrs, children; 
 	    if (arguments.length>0) { 
 	      if (arguments[0].nodeName || typeof arguments[0] == "string") children = arguments; 
-	      else { attrs = arguments[0]; children = Array.slice(arguments, 1); };
+	      else { attrs = arguments[0]; children = [].slice.call(arguments, 1); };
 	    }
 	    return DOM.Builder.create(tag, attrs, children);
 	  };

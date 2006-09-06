@@ -3,6 +3,7 @@ BehaviorDebugger = {
            "font-family: sans-serif; font-size: 12px",
   HEAD_STYLES : "margin : 0; padding: 5px; font-size: 18px; background: black; color: white;",
   TABLE_STYLES : "width: 100%; margin: 5px 0;",
+  HIGHLIGHT_BORDER : "1px solid red",
   open : function() {
     if (!this.debuggerPane) 
       this._createDebugger();
@@ -47,7 +48,7 @@ BehaviorDebugger = {
   },
   _showApplied : function(el) {
     $$(el.firstChild.nodeValue.split(':').first()).each(function(el) {
-      el.style.border = "1px solid red";
+      el.style.border = this.HIGHLIGHT_BORDER;
     });
     return false;
   }
