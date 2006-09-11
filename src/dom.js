@@ -56,7 +56,7 @@ DOM.Builder = {
 		var el = document.createElement((isIE && attrs.name) ? "<" + tag + " name=" + attrs.name + ">" : tag);
 		for (var attr in attrs) {
 		  if (typeof attrs[attr] != 'function') {
-		    if (isIE) this.ieAttrSet(attrs, attrs, el);
+		    if (isIE) this.ieAttrSet(attrs, attr, el);
 		    else el.setAttribute(attr, attrs[attr]);
 		  };
 	  }
