@@ -61,6 +61,7 @@ Object.extend(Event.addBehavior, {
     this.cache.each(function(c) {
       Event.stopObserving.apply(Event, c);
     });
+    this.cache = [];
   }
   
 });
