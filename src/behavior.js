@@ -15,16 +15,19 @@ Event.addBehavior = function(rules) {
   var ab = this.addBehavior;
   Object.extend(ab.rules, rules);
   
-  if (ab.autoTrigger) {
-    this.onReady(ab.load.bind(ab));
+  if (!ab.responderApplied) {
+    Ajax.Responders.register({
+      onComplete : function() { 
+        if (Event.addBehavior.reassignAfterAjax) 
+          setTimeout(function() { ab.unload(); ab.load(ab.rules) }, 10);
+      }
+    });
+    ab.responderApplied = true;
   }
   
-  Ajax.Responders.register({
-    onComplete : function() { 
-      if (Event.addBehavior.reassignAfterAjax) 
-        setTimeout(function() { ab.load() }, 10);
-    }
-  });
+  if (ab.autoTrigger) {
+    this.onReady(ab.load.bind(ab, rules));
+  }
   
 };
 
@@ -33,10 +36,9 @@ Object.extend(Event.addBehavior, {
   reassignAfterAjax : true,
   autoTrigger : true,
   
-  load : function() {
-    this.unload();
-    for (var selector in this.rules) {
-      var observer = this.rules[selector];
+  load : function(rules) {
+    for (var selector in rules) {
+      var observer = rules[selector];
       var sels = selector.split(',');
       sels.each(function(sel) {
         var parts = sel.split(/:(?=[a-z]+$)/), css = parts[0], event = parts[1];
