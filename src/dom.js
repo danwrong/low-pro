@@ -3,20 +3,30 @@ DOM = {
   nextElement : function(element) {
     element = $(element);
     while (element = element.nextSibling) 
-      if (element.nodeType == 1) return $(element);
+      if (element.nodeType == 1) return element;
     return null;
   },
   previousElement : function(element) {
     element = $(element);
     while (element = element.previousSibling) 
-      if (element.nodeType == 1) return $(element);
+      if (element.nodeType == 1) return element;
     return null;
   },
   remove : function(element) {
-    return $(element).parentNode.removeChild(element);
+    element = $(element);
+    return element.parentNode.removeChild(element);
   },
   insertAfter : function(element, node) {
-    return $(element).insertBefore(node, element.previousSibling);
+    element = $(element);
+    return element.insertBefore(node, element.previousSibling);
+  },
+  addBefore : function(element, node) {
+    element = $(element);
+    return element.parentNode.insertBefore(node, element);
+  },
+  addAfter : function(element, node) {
+    element = $(element);
+    return element.parentNode.insertAfter(node, element);
   },
   replaceElement : function(element, node) {
     $(element).parentNode.replaceChild(node, element);
@@ -57,7 +67,7 @@ DOM.Builder = {
 		for (var attr in attrs) {
 		  if (typeof attrs[attr] != 'function') {
 		    if (isIE) this.ieAttrSet(attrs, attr, el);
-		    else el.setAttribute(attr, attrs[attr]);
+		    else el.setAttribute(attr, attrs[attr].toString());
 		  };
 	  }
 		for (var i=0; i<children.length; i++) {

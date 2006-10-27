@@ -6,7 +6,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<title>test</title>
-	<script src="prototype.js" type="text/javascript" charset="utf-8"></script>
+	<script src="prototypeRC1.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lowpro.packed.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../src/debug.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" charset="utf-8">
@@ -19,8 +19,8 @@
 		});
 		
 		var LinkBehavior = Behavior.create({
-			initialize : function() {
-				this.count = 0;
+			initialize : function(init) {
+				this.count = init;
 			},
 			onmouseover : function() {
 				this.element.addClassName('goo');
@@ -51,7 +51,9 @@
 				return false;
 			},
 			'#doomed:click' : function() {
-				this.remove();
+				this.addBefore($strong('YEAH, It worked.'));
+				var el = this;
+				setTimeout(function() { el.remove(); }, 500);
 				return false;
 			},
 			'#bung' : LinkBehavior,
@@ -95,7 +97,7 @@
 
 
 <h2>DOM Methods</h2>
-<p><a href="http://www.danwebb.net" id="doomed">This link should be removed from the DOM when you click it.</a></p>
+<p><a href="http://www.danwebb.net" id="doomed">This link should be removed from the DOM when you click it and replaced with other content.</a></p>
 
 <h2>Creating DOM Structures</h2>
 <div id="drop">

@@ -49,6 +49,7 @@ Object.extend(Event.addBehavior, {
           } else {
             if (!element.$$assigned || !element.$$assigned.include(observer)) {
               if (observer.attach) observer.attach(element);
+              
               else observer.call($(element));
               element.$$assigned = element.$$assigned || [];
               element.$$assigned.push(observer);
@@ -80,20 +81,40 @@ Event.observe(window, 'unload', Event.addBehavior.unload.bind(Event.addBehavior)
 // var MyBehavior = Behavior.create({
 //   onmouseover : function() { this.element.addClassName('bong') } 
 // });
-
+//
 // Event.addBehavior({ 'a.rollover' : MyBehavior });
+// 
+// If you need to pass additional values to initialize use:
+//
+// Event.addBehavior({ 'a.rollover' : MyBehavior(10, { thing : 15 }) })
+//
+// You can also use the attach() method.  If you specify extra arguments to attach they get passed to initialize.
+//
+// MyBehavior.attach(el, values, to, init);
+//
 Behavior = {
   create : function(members) {
-    var behavior = function(element) { this.element = $(element) };
+    var behavior = function() { 
+      if (this == window) {
+        var args = [], behavior = arguments.callee;
+        for (var i = 0; i < arguments.length; i++) args.push(arguments[i]);
+          
+        return function(element) {
+          var initArgs = [this].concat(args);
+          behavior.attach.apply(behavior, initArgs);
+        };
+      } else this.element = $(arguments[0]);
+    };
     behavior.prototype.initialize = Prototype.K;
     Object.extend(behavior.prototype, members);
     Object.extend(behavior, Behavior.ClassMethods);
     return behavior;
   },
   ClassMethods : {
-    attach : function(element) {
+    attach : function() {
+      var element = arguments[0];
       var bound = new this(element);
-      bound.initialize.apply(bound);
+      bound.initialize.apply(bound, [].slice.call(arguments, 1));
       this._bindEvents(bound);
       return bound;
     },
