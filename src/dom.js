@@ -16,9 +16,9 @@ DOM = {
     element = $(element);
     return element.parentNode.removeChild(element);
   },
-  insertAfter : function(element, node) {
+  insertAfter : function(element, node, otherNode) {
     element = $(element);
-    return element.insertBefore(node, element.previousSibling);
+    return element.insertBefore(node, otherNode.nextSibling);
   },
   addBefore : function(element, node) {
     element = $(element);

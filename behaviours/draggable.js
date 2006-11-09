@@ -3,6 +3,7 @@ Draggable = Behavior.create({
     this.options = Object.extend({
       // defaults
     }, options);
+    Draggable.draggables.push(this);
   },
   
   onmousedown : function() {
@@ -19,7 +20,5 @@ Draggable = Behavior.create({
 });
 
 Object.extend(Draggable, {
-  all : [],
-  register : function() {},
-  unregister : function() {}
+  draggables : []
 });
