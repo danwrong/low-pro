@@ -26,7 +26,7 @@ DOM = {
   },
   addAfter : function(element, node) {
     element = $(element);
-    return element.parentNode.insertAfter(node, element);
+    return $(element.parentNode).insertAfter(node, element);
   },
   replaceElement : function(element, node) {
     $(element).parentNode.replaceChild(node, element);

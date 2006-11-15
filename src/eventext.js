@@ -30,6 +30,11 @@ Object.extend(Event, {
 	},
 	stopObserving : function(el, type, func) {
     if (el.events && el.events[type]) delete el.events[type][func.$$guid];
+    
+    for (var i = 0; i < Event.observers.length; i++) {
+      if (Event.observers[i][0] == el && 
+          Event.observers[i][1] == type && 
+          Event.observers[i][1] == func) delete Event.observers[i];
   },
   _handleEvent : function(e) {
     var returnValue = true;
