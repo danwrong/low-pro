@@ -29,6 +29,7 @@ Object.extend(Event, {
   	 Event.observers.push([el, name, func, false]);
 	},
 	stopObserving : function(el, type, func) {
+	  el = $(el);
     if (el.events && el.events[type]) delete el.events[type][func.$$guid];
     
     for (var i = 0; i < Event.observers.length; i++) {
