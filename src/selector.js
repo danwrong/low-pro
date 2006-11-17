@@ -90,11 +90,9 @@ if (document.evaluate) {
             parts.push("[@" + mm[1] + "!='" + mm[3] + "]");
           if (mm[2] == "~=")
             parts.push(":not([contains(@" + mm[1] + ", '" + mm[3] + "')])");
-        } else  {
+        } else {
           mm = reg.attr1.exec(subRule);
-          if (mm) {
-            parts.push(":not([@" + mm[1] + "])");
-          }
+          if (mm) parts.push(":not([@" + mm[1] + "])");
         }
         rule = rule.substr(m[0].length);  
       }
@@ -117,13 +115,14 @@ if (document.evaluate) {
             break;
           default:
             parts.push("//");
-        }      
+            break;
+        } 
         index = parts.length;
         parts.push("*");
         rule = rule.substr(m[0].length);
       }
 
-      m = reg.comma.exec(rule)
+      m = reg.comma.exec(rule);
       if (m) { 
         parts.push(" | ", "//", "*");
         index = parts.length - 1;
