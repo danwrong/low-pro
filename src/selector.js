@@ -1,82 +1,136 @@
-// Original code by Sylvian Zimmer
-// http://www.sylvainzimmer.com/index.php/archives/2006/06/25/speeding-up-prototypes-selector/
-// Optimises execution speed of the $$ function.  Rewritten for readability by Justin Palmer.
-// 
-// Turn off optimisation with LowPro.optimize$$ = false;
-LowPro.SelectorLite = Class.create();
-LowPro.SelectorLite.prototype = {
-  initialize: function(selectors) {
-    this.results = []; 
-    this.selectors = []; 
-    this.index = 0;
-    
-    for(var i = selectors.length -1; i >= 0; i--) {
-      var params = { tag: '*', id: null, classes: [] };
-      var selector = selectors[i];
-      var needle = selector.length - 1;
-      
-      do {
-        var id = selector.lastIndexOf("#");
-        var klass = selector.lastIndexOf(".");
-        var cursor = Math.max(id, klass);
-        
-        if(cursor == -1) params.tag = selector.toUpperCase();
-        else if(id == -1 || klass == cursor) params.classes.push(selector.substring(klass + 1));
-        else if(!params.id) params.id = selector.substring(id + 1);
-        
-        selector = selector.substring(0, cursor);
-      } while(cursor > 0);
-      
-      this.selectors[i] = params;
+// XPath-based optimsation for $$ ripped from RoR ticket #5171
+// By Andrew Dupont <rubyonrails@andrewdupont.net>
+if (document.evaluate) {
+  Element.addMethods({
+    getElementsByXPath: function(element, expression) {
+      var results = [];
+      var query = document.evaluate(expression, element, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+      for (var i = 0, len = query.snapshotLength; i < len; i++)
+       results.push(query.snapshotItem(i));
+      return results;
+    },
+
+    getElementsByClassName: function(element, className) {
+      return (document.getElementsByClassName(className, element));
+    },
+
+    getElementsBySelector: function(element, expression) {
+      return element.getElementsByXPath(expression.toXPath());
     }
-    
-  },
+  });
+
+  document.getElementsByClassName = function(className, parentElement) {
+    return (document.getElementsByXPath("//*[contains(concat(' ',@class, ' '), ' " + 
+      className + " ')]", (parentElement || document)));
+  };
+
+  document.getElementsByXPath = function(expression) { 
+    return document.body.getElementsByXPath(expression);
+  };
+
+  $$ = function() {
+    return $A(arguments).map(function(expression) {
+      return document.getElementsByXPath($$.cssToXPath(expression));
+    }).flatten();
+  }; 
   
-  get: function(root) {
-    this.findElements(root || document, this.index == (this.selectors.length - 1));
-    return this.results;
-  },
-  
-  findElements: function(parent, descendant) {
-    var selector = this.selectors[this.index], results = [], element;
-    if (selector.id) {
-      element = $(selector.id);
-      if (element && (selector.tag == '*' || element.tagName == selector.tag) && (element.childOf(parent))) {
-          results = [element];
+  $$.cssToXPath = function(rule) {
+    var index = 1, parts = ["//", "*"], lastRule, subRule, m, mm;
+    var reg = {
+      element:    /^([#.]?)([a-z0-9\\*_-]*)((\|)([a-z0-9\\*_-]*))?/i, 
+      attr1:      /^\[([^\]]*)\]/,
+      attr2:      /^\[\s*([^~=\s]+)\s*(~?=)\s*"([^"]+)"\s*\]/i,
+      attrN:      /^:not\((.*?)\)/i,
+      pseudo:     /^:([()a-z_-]+)/i,                                  
+      combinator: /^(\s*[>+\s])?/i,                                   
+      comma:      /^\s*,/i                                            
+    };
+
+    while (rule.length && rule != lastRule) {
+      lastRule = rule;
+
+      m = reg.element.exec(rule);
+      if (m) {
+        switch(m[1]) {
+          case "#": 
+            parts.push("[@id='" + m[2] + "']"); 
+            break;                
+        case ".": 
+          parts.push("[contains(concat(' ', @class, ' '), ' " + m[2] + " ')]"); 
+          break;
+        default:
+          parts[index] = (m[5] || m[2]);        
+        }      
+        rule = rule.substr(m[0].length);
       }
-    } else {
-      results = $A(parent.getElementsByTagName(selector.tag));
+
+      m = reg.attr2.exec(rule);
+      if (m) {
+        if (m[2] == "!=") 
+          parts.push("[@" + m[1] + "!='" + m[3] + "]");
+        if (m[2] == "~=") 
+          parts.push("[contains(@" + m[1] + ", '" + m[3] + "')]");
+        else           
+          parts.push("[@" + m[1] + "='" + m[3] + "']");
+        rule = rule.substr(m[0].length);
+      } else {
+        m = reg.attr1.exec(rule);
+        if (m) { 
+          parts.push("[@" + m[1] + "]");
+          rule = rule.substr(m[0].length);
+        }
+      }
+
+      m = reg.attrN.exec(rule);
+      if (m) {
+        subRule = m[1];
+        mm = reg.attr2.exec(subRule);
+        if (mm) {
+          if (mm[2] == "=")
+            parts.push("[@" + mm[1] + "!='" + mm[3] + "]");
+          if (mm[2] == "~=")
+            parts.push(":not([contains(@" + mm[1] + ", '" + mm[3] + "')])");
+        } else  {
+          mm = reg.attr1.exec(subRule);
+          if (mm) {
+            parts.push(":not([@" + mm[1] + "])");
+          }
+        }
+        rule = rule.substr(m[0].length);  
+      }
+
+      m = reg.pseudo.exec(rule);
+      while (m) {
+        rule = rule.substr(m[0].length);
+        m = reg.pseudo.exec(rule);
+      }
+
+      m = reg.combinator.exec(rule);
+      if (m) {
+        if (m[0].length == 0) continue;
+        switch (true) {
+          case (m[0].indexOf(">") != -1): 
+            parts.push("/"); 
+            break;
+          case (m[0].indexOf("+") != -1): 
+            parts.push("/following-sibling::"); 
+            break;
+          default:
+            parts.push("//");
+        }      
+        index = parts.length;
+        parts.push("*");
+        rule = rule.substr(m[0].length);
+      }
+
+      m = reg.comma.exec(rule)
+      if (m) { 
+        parts.push(" | ", "//", "*");
+        index = parts.length - 1;
+        rule = rule.substr(m[0].length);
+      }
+      m = null;
     }
-    
-    if (selector.classes.length == 1) {
-      results = results.select(function(target) {
-       return $(target).hasClassName(selector.classes[0]);
-      });
-    } else if (selector.classes.length > 1) {
-      results = results.select(function(target) {
-        var klasses = $(target).classNames();
-        return selector.classes.all(function(klass) {
-          return klasses.include(klass);
-        });
-      });
-    }
-    
-    if (descendant) {
-      this.results = this.results.concat(results);
-    } else {
-      ++this.index;
-      results.each(function(target) {
-        this.findElements(target, this.index == (this.selectors.length - 1));
-      }.bind(this));
-    }
+    return parts.join('');
   }
-};
-
-LowPro.$$old=$$;
-LowPro.optimize$$ = true;
-
-$$ = function(a,b) {
-  if (LowPro.optimize$$ == false || b || a.indexOf("[")>=0) 
-    return LowPro.$$old(a, b);
-  return new LowPro.SelectorLite(a.split(/\s+/)).get();
-};
+}

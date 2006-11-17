@@ -1,7 +1,7 @@
 Low Pro - Unobtrusive Scripting Extensions to Prototype
 -------------------------------------------------------
 
-Version: 0.2
+Version: 0.3
 Author: Dan Webb (dan@danwebb.net)
 Project Home: http://www.danwebb.net/lowpro/
 Subversion: http://svn.danwebb.net/external/lowpro/
@@ -30,6 +30,6 @@ This library is based on the work of many great JavaScript programmers:
 
 Dean Edwards, John Resig and Matthias Miller: dom ready work and Dean's addEvent.
 Justin Palmer: event:Selectors which is the basis for addBehavior.
-Sylvian Zimmer: $$ optimisation.
+Andrew Dupont: $$ optimisation.
 
 Cheers!
