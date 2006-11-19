@@ -1,5 +1,6 @@
 // XPath-based optimsation for $$ ripped from RoR ticket #5171
-// By Andrew Dupont <rubyonrails@andrewdupont.net>
+// By Andrew Dupont <rubyonrails@andrewdupont.net> but with
+// added rule caching.
 if (document.evaluate) {
   Element.addMethods({
     getElementsByXPath: function(element, expression) {
@@ -35,6 +36,9 @@ if (document.evaluate) {
   }; 
   
   $$.cssToXPath = function(rule) {
+    var cached;
+    if (cached = $$.cssToXPath.cache[rule]) return cached;
+    
     var index = 1, parts = ["//", "*"], lastRule, subRule, m, mm;
     var reg = {
       element:    /^([#.]?)([a-z0-9\\*_-]*)((\|)([a-z0-9\\*_-]*))?/i, 
@@ -130,6 +134,8 @@ if (document.evaluate) {
       }
       m = null;
     }
-    return parts.join('');
-  }
+    return $$.cssToXPath.cache[rule] = parts.join('');
+  };
+  
+  $$.cssToXPath.cache = {};
 }
