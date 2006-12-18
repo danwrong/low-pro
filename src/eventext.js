@@ -26,7 +26,7 @@ Object.extend(Event, {
   	el["on" + type] = Event._handleEvent;
   	
   	 if (!Event.observers) Event.observers = [];
-  	 Event.observers.push([el, name, func, false]);
+  	 Event.observers.push([el, type, func, false]);
 	},
 	stopObserving : function(el, type, func) {
 	  el = $(el);
