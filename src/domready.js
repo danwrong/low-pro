@@ -27,7 +27,8 @@ Object.extend(Event, {
         
         /*@cc_on @*/
         /*@if (@_win32)
-            document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
+            var dummy = location.protocol == "https:" ?  "https://javascript:void(0)" : "javascript:void(0)";
+            document.write("<script id=__ie_onload defer src='" + dummy + "'><\/script>");
             document.getElementById("__ie_onload").onreadystatechange = function() {
                 if (this.readyState == "complete") { domReady(); }
             };
