@@ -54,8 +54,13 @@ DOM.Builder = {
 	  return function() {
 	    var attrs, children; 
 	    if (arguments.length>0) { 
-	      if (arguments[0].nodeName || typeof arguments[0] == "string") children = arguments; 
-	      else { attrs = arguments[0]; children = [].slice.call(arguments, 1); };
+	      if (arguments[0].nodeName || 
+	        typeof arguments[0] == "string") 
+	        children = arguments; 
+	      else { 
+	        attrs = arguments[0]; 
+	        children = [].slice.call(arguments, 1); 
+	      };
 	    }
 	    return DOM.Builder.create(tag, attrs, children);
 	  };
@@ -63,15 +68,21 @@ DOM.Builder = {
 	create : function(tag, attrs, children) {
 		attrs = attrs || {}; children = children || [];
 		var isIE = navigator.userAgent.match(/MSIE/);
-		var el = document.createElement((isIE && attrs.name) ? "<" + tag + " name=" + attrs.name + ">" : tag);
+		var el = document.createElement(
+		  (isIE && attrs.name) ? 
+		  "<" + tag + " name=" + attrs.name + ">" : tag
+		);
+		
 		for (var attr in attrs) {
 		  if (typeof attrs[attr] != 'function') {
 		    if (isIE) this.ieAttrSet(attrs, attr, el);
 		    else el.setAttribute(attr, attrs[attr].toString());
 		  };
 	  }
+	  
 		for (var i=0; i<children.length; i++) {
-			if (typeof children[i] == 'string') children[i] = document.createTextNode(children[i]);
+			if (typeof children[i] == 'string') 
+			  children[i] = document.createTextNode(children[i]);
 			el.appendChild(children[i]);
 		}
 		return $(el);
@@ -86,6 +97,7 @@ DOM.Builder = {
 				   "script|link|style|bdo|ins|del|object|param|col|colgroup|optgroup|caption|" + 
 				   "label|dfn|kbd|samp|var").split("|");
   var el, i=0;
-	while (el = els[i++]) window['$' + el] = DOM.Builder.tagFunc(el);
+	while (el = els[i++]) 
+	  window['$' + el] = DOM.Builder.tagFunc(el);
 })();
 

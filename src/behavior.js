@@ -97,7 +97,8 @@ Behavior = {
     var behavior = function() { 
       if (this == window) {
         var args = [], behavior = arguments.callee;
-        for (var i = 0; i < arguments.length; i++) args.push(arguments[i]);
+        for (var i = 0; i < arguments.length; i++) 
+          args.push(arguments[i]);
           
         return function(element) {
           var initArgs = [this].concat(args);

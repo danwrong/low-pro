@@ -22,7 +22,7 @@ end
 DOC = ROOT + '/doc'
 LP_VERSION = get_version_string
 
-SOURCE_LIST = file_list SRC, 'lowpro.js', 'dom.js', 'domready.js', 'eventext.js', 'behavior.js', 'selector.js'
+SOURCE_LIST = file_list SRC, 'lowpro.js', 'dom.js', 'domready.js', 'eventext.js', 'behavior.js'
 
 DIST_LIST = file_list DIST, 'lowpro.js', 'lowpro.packed.js', 'README', 'LICENSE'
 
@@ -62,10 +62,10 @@ end
 
 desc 'Uses packer to compact the build js file.'
 task :pack => :build do
-  puts 'Building packed version...'
-  `~/scripts/jspack -i #{DIST + '/lowpro.js'} -o #{DIST + '/lowpro.packed.js'} -e62`
-  orig, packed = File.size(DIST + '/lowpro.js'), File.size(DIST + '/lowpro.packed.js')
-  puts "Original: #{orig} / Packed: #{packed} (#{((packed.to_f / orig.to_f) * 100).to_i}%)"
+#  puts 'Building packed version...'
+#  `~/scripts/jspack -i #{DIST + '/lowpro.js'} -o #{DIST + '/lowpro.packed.js'} -e62`
+#  orig, packed = File.size(DIST + '/lowpro.js'), File.size(DIST + '/lowpro.packed.js')
+#  puts "Original: #{orig} / Packed: #{packed} (#{((packed.to_f / orig.to_f) * 100).to_i}%)"
 end
 
 desc 'Copies a built version of LowPro to test dir.'
