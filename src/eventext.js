@@ -1,13 +1,3 @@
-// Extend Element with observe and stopObserving.
-Element.addMethods({
-  observe : function(el, event, callback) {
-    Event.observe(el, event, callback);
-  },
-  stopObserving : function(el, event, callback) {
-    Event.stopObserving(el, event, callback);
-  }
-});
-
 // Replace out existing event observe code with Dean Edwards' addEvent
 // http://dean.edwards.name/weblog/2005/10/add-event/
 Object.extend(Event, {
@@ -63,9 +53,10 @@ Object.extend(Event, {
   trigger : function(element, event, fakeEvent) {
     element = $(element);
     fakeEvent = fakeEvent || { type :  event };
-    this.observers.each(function(cache) {
-      if (cache[0] == element && cache[1] == event)
-        cache[2].call(element, fakeEvent);
-    });
+    if(element.events && element.events[event]) { 	
+      $H(element.events[event]).each(function(cache) {
+        cache[1].call(element, fakeEvent);
+    	});
+    }
   }
 });

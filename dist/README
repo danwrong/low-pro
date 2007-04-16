@@ -31,5 +31,6 @@ This library is based on the work of many great JavaScript programmers:
 Dean Edwards, John Resig and Matthias Miller: dom ready work and Dean's addEvent.
 Justin Palmer: event:Selectors which is the basis for addBehavior.
 Andrew Dupont: $$ optimisation.
+Contributors of patches / bug fixes: Matt Wilson
 
 Cheers!
