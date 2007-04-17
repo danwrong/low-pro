@@ -1,3 +1,13 @@
+// Extend Element with observe and stopObserving.
+if (typeof Element.Methods.observe == 'undefined') Element.addMethods({
+  observe : function(el, event, callback) {
+    Event.observe(el, event, callback);
+  },
+  stopObserving : function(el, event, callback) {
+    Event.stopObserving(el, event, callback);
+  }
+});
+
 // Replace out existing event observe code with Dean Edwards' addEvent
 // http://dean.edwards.name/weblog/2005/10/add-event/
 Object.extend(Event, {

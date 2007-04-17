@@ -158,6 +158,16 @@ Object.extend(Event, {
   }
 });
 
+// Extend Element with observe and stopObserving.
+if (typeof Element.Methods.observe == 'undefined') Element.addMethods({
+  observe : function(el, event, callback) {
+    Event.observe(el, event, callback);
+  },
+  stopObserving : function(el, event, callback) {
+    Event.stopObserving(el, event, callback);
+  }
+});
+
 // Replace out existing event observe code with Dean Edwards' addEvent
 // http://dean.edwards.name/weblog/2005/10/add-event/
 Object.extend(Event, {
@@ -183,9 +193,10 @@ Object.extend(Event, {
     if (el.events && el.events[type]) delete el.events[type][func.$$guid];
     
     for (var i = 0; i < Event.observers.length; i++) {
-      if (Event.observers[i][0] == el && 
+      if (Event.observers[i] &&
+          Event.observers[i][0] == el && 
           Event.observers[i][1] == type && 
-          Event.observers[i][1] == func) delete Event.observers[i];
+          Event.observers[i][2] == func) delete Event.observers[i];
     }
   },
   _handleEvent : function(e) {
