@@ -6,22 +6,6 @@ if (!Element.addMethods)
 
 // Simple utility methods for working with the DOM
 DOM = {
-  nextElement : function(element) {
-    element = $(element);
-    while (element = element.nextSibling) 
-      if (element.nodeType == 1) return element;
-    return null;
-  },
-  previousElement : function(element) {
-    element = $(element);
-    while (element = element.previousSibling) 
-      if (element.nodeType == 1) return element;
-    return null;
-  },
-  remove : function(element) {
-    element = $(element);
-    return element.parentNode.removeChild(element);
-  },
   insertAfter : function(element, node, otherNode) {
     element = $(element);
     return element.insertBefore(node, otherNode.nextSibling);
@@ -37,6 +21,19 @@ DOM = {
   replaceElement : function(element, node) {
     $(element).parentNode.replaceChild(node, element);
     return node;
+  },
+  appendChildren : function(element, children) {
+    element = $(element);
+    if (!(children instanceof Array))
+      children = Array.prototype.slice.call(arguments, 1);
+    children.each(function(child) { element.appendChild(child) });
+    return children;
+  },
+  wrap : function(element, wrappingElement) {
+    element = $(element), wrappingElement = $(wrappingElement);
+    element.replaceElement(wrappingElement);
+    wrappingElement.appendChild(element);
+    return wrappingElement;
   }
 };
 
@@ -65,7 +62,7 @@ DOM.Builder = {
 	        children = arguments; 
 	      else { 
 	        attrs = arguments[0]; 
-	        children = [].slice.call(arguments, 1); 
+	        children = Array.prototype.slice.call(arguments, 1); 
 	      };
 	    }
 	    return DOM.Builder.create(tag, attrs, children);
@@ -83,6 +80,8 @@ DOM.Builder = {
 		  if (typeof attrs[attr] != 'function') {
 		    if (isIE) this.ieAttrSet(attrs, attr, el);
 		    else el.setAttribute(attr, attrs[attr].toString());
+		  } else if (attr.match(/^on(.+)$/)) {
+		    Event.observe(el, RegExp.$1, attrs[attr]);
 		  };
 	  }
 	  
@@ -329,8 +328,9 @@ Event.observe(window, 'unload', Event.addBehavior.unload.bind(Event.addBehavior)
 Behavior = {
   create : function(members) {
     var behavior = function() { 
+      var behavior = arguments.callee;
       if (this == window) {
-        var args = [], behavior = arguments.callee;
+        var args = [];
         for (var i = 0; i < arguments.length; i++) 
           args.push(arguments[i]);
           
@@ -338,20 +338,25 @@ Behavior = {
           var initArgs = [this].concat(args);
           behavior.attach.apply(behavior, initArgs);
         };
-      } else this.element = $(arguments[0]);
+      } else {
+        var args = (arguments.length == 2 && arguments[1] instanceof Array) ? 
+                      arguments[1] : Array.prototype.slice.call(arguments, 1);
+
+        this.element = $(arguments[0]);
+        this.initialize.apply(this, args);
+        behavior._bindEvents(this);
+        behavior.instances.push(this);
+      }
     };
     behavior.prototype.initialize = Prototype.K;
     Object.extend(behavior.prototype, members);
     Object.extend(behavior, Behavior.ClassMethods);
+    behavior.instances = [];
     return behavior;
   },
   ClassMethods : {
-    attach : function() {
-      var element = arguments[0];
-      var bound = new this(element);
-      bound.initialize.apply(bound, [].slice.call(arguments, 1));
-      this._bindEvents(bound);
-      return bound;
+    attach : function(element) {
+      return new this(element, Array.prototype.slice.call(arguments, 1));
     },
     _bindEvents : function(bound) {
       for (var member in bound)

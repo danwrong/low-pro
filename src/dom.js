@@ -1,21 +1,5 @@
 // Simple utility methods for working with the DOM
 DOM = {
-  nextElement : function(element) {
-    element = $(element);
-    while (element = element.nextSibling) 
-      if (element.nodeType == 1) return element;
-    return null;
-  },
-  previousElement : function(element) {
-    element = $(element);
-    while (element = element.previousSibling) 
-      if (element.nodeType == 1) return element;
-    return null;
-  },
-  remove : function(element) {
-    element = $(element);
-    return element.parentNode.removeChild(element);
-  },
   insertAfter : function(element, node, otherNode) {
     element = $(element);
     return element.insertBefore(node, otherNode.nextSibling);
@@ -31,6 +15,19 @@ DOM = {
   replaceElement : function(element, node) {
     $(element).parentNode.replaceChild(node, element);
     return node;
+  },
+  appendChildren : function(element, children) {
+    element = $(element);
+    if (!(children instanceof Array))
+      children = Array.prototype.slice.call(arguments, 1);
+    children.each(function(child) { element.appendChild(child) });
+    return children;
+  },
+  wrap : function(element, wrappingElement) {
+    element = $(element), wrappingElement = $(wrappingElement);
+    element.replaceElement(wrappingElement);
+    wrappingElement.appendChild(element);
+    return wrappingElement;
   }
 };
 
@@ -59,7 +56,7 @@ DOM.Builder = {
 	        children = arguments; 
 	      else { 
 	        attrs = arguments[0]; 
-	        children = [].slice.call(arguments, 1); 
+	        children = Array.prototype.slice.call(arguments, 1); 
 	      };
 	    }
 	    return DOM.Builder.create(tag, attrs, children);
@@ -77,6 +74,8 @@ DOM.Builder = {
 		  if (typeof attrs[attr] != 'function') {
 		    if (isIE) this.ieAttrSet(attrs, attr, el);
 		    else el.setAttribute(attr, attrs[attr].toString());
+		  } else if (attr.match(/^on(.+)$/)) {
+		    Event.observe(el, RegExp.$1, attrs[attr]);
 		  };
 	  }
 	  

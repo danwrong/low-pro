@@ -7,7 +7,7 @@
 
 	<title>test-b-classes</title>
 	
-	<script src="prototypeRC1.js" type="text/javascript" charset="utf-8"></script>
+	<script src="prototypeRC2.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lowpro.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" charset="utf-8">
 		Draggable = Behavior.create({
@@ -20,7 +20,7 @@
 		})
 		
 		Event.onReady(function() {
-			Draggable.attach('thing', 5, 18);
+			new Draggable('thing', 5, 18);
 		})
 		
 		Event.addBehavior({

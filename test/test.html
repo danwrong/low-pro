@@ -59,7 +59,7 @@
 			'#drop' : function() {
 				this.appendChild($ul(
 					$li('item 1'),
-					$li('item 2')
+					$li({ onclick : function() { alert('I work') }}, 'click me')
 				));
 			}
 		});

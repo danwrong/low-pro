@@ -95,8 +95,9 @@ Event.observe(window, 'unload', Event.addBehavior.unload.bind(Event.addBehavior)
 Behavior = {
   create : function(members) {
     var behavior = function() { 
+      var behavior = arguments.callee;
       if (this == window) {
-        var args = [], behavior = arguments.callee;
+        var args = [];
         for (var i = 0; i < arguments.length; i++) 
           args.push(arguments[i]);
           
@@ -104,20 +105,25 @@ Behavior = {
           var initArgs = [this].concat(args);
           behavior.attach.apply(behavior, initArgs);
         };
-      } else this.element = $(arguments[0]);
+      } else {
+        var args = (arguments.length == 2 && arguments[1] instanceof Array) ? 
+                      arguments[1] : Array.prototype.slice.call(arguments, 1);
+
+        this.element = $(arguments[0]);
+        this.initialize.apply(this, args);
+        behavior._bindEvents(this);
+        behavior.instances.push(this);
+      }
     };
     behavior.prototype.initialize = Prototype.K;
     Object.extend(behavior.prototype, members);
     Object.extend(behavior, Behavior.ClassMethods);
+    behavior.instances = [];
     return behavior;
   },
   ClassMethods : {
-    attach : function() {
-      var element = arguments[0];
-      var bound = new this(element);
-      bound.initialize.apply(bound, [].slice.call(arguments, 1));
-      this._bindEvents(bound);
-      return bound;
+    attach : function(element) {
+      return new this(element, Array.prototype.slice.call(arguments, 1));
     },
     _bindEvents : function(bound) {
       for (var member in bound)
