@@ -46,12 +46,18 @@ DOM.Builder = {
     'class' : 'className',
     'for' : 'htmlFor'
   },
+  cache: {},
   ieAttrSet : function(attrs, attr, el) {
     var trans;
     if (trans = this.IE_TRANSLATIONS[attr]) el[trans] = attrs[attr];
     else if (attr == 'style') el.style.cssText = attrs[attr];
     else if (attr.match(/^on/)) el[attr] = new Function(attrs[attr]);
     else el.setAttribute(attr, attrs[attr]);
+  },
+  getElement : function(tag) {
+    var element;
+    if (element = DOM.Builder.cache[tag]) return element.cloneNode(false);
+    else return DOM.Builder.cache[tag] = document.createElement(tag);
   },
 	tagFunc : function(tag) {
 	  return function() {
@@ -69,14 +75,14 @@ DOM.Builder = {
 	  };
   },
 	create : function(tag, attrs, children) {
-		attrs = attrs || {}; children = children || [];
+		attrs = attrs || {}; children = children || []; tag = tag.toLowerCase();
 		var isIE = navigator.userAgent.match(/MSIE/);
-		var el = document.createElement(
-		  (isIE && attrs.name) ? 
-		  "<" + tag + " name=" + attrs.name + ">" : tag
-		);
+		var el = (isIE && attrs.name) ? 
+		  document.createElement("<" + tag + " name=" + attrs.name + ">") : 
+		  DOM.Builder.getElement(tag);
 		
 		for (var attr in attrs) {
+		  if (attr === true) attrs[attr] = attr;
 		  if (typeof attrs[attr] != 'function') {
 		    if (isIE) this.ieAttrSet(attrs, attr, el);
 		    else el.setAttribute(attr, attrs[attr].toString());
