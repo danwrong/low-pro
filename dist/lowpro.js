@@ -112,6 +112,18 @@ DOM.Builder = {
 	  window['$' + el] = DOM.Builder.tagFunc(el);
 })();
 
+DOM.Builder.fromHTML = function(html) {
+  var root;
+  if (!(root = arguments.callee._root))
+    root = arguments.callee._root = document.createElement('div');
+  root.innerHTML = html;
+  return root.childNodes[0];
+}
+
+String.prototype.toElement = function() {
+  return DOM.Builder.fromHTML(this);
+}
+
 
 
 // Adapted from DOM Ready extension by Dan Webb
