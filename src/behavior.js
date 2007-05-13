@@ -92,6 +92,11 @@ Event.observe(window, 'unload', Event.addBehavior.unload.bind(Event.addBehavior)
 //
 // MyBehavior.attach(el, values, to, init);
 //
+// Finally, the rawest method is using the new constructor normally:
+// var draggable = new Draggable(element, init, vals);
+//
+// Each behaviour has a collection of all its instances in Behavior.instances
+//
 Behavior = {
   create : function(members) {
     var behavior = function() { 
