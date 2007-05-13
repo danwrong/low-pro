@@ -118,20 +118,20 @@ DOM.Builder.fromHTML = function(html) {
     root = arguments.callee._root = document.createElement('div');
   root.innerHTML = html;
   return root.childNodes[0];
-}
+};
 
 String.prototype.toElement = function() {
   return DOM.Builder.fromHTML(this);
-}
+};
 
-new function() {
+(function() {
   var old$ = $;
-  $ = function() {
-    for (var i = 0, el; el = arguments[i]; i++)
-      if (el.toElement && el.match(/^<(.+)>$/)) arguments[i] = el.toElement();
+  $ = function(element) {
+    if (element && element.toElement && element.match(/^<(.+)>$/)) 
+      return $(element.toElement());
     return old$.apply(this, arguments);
   }
-}
+})();
 
 
 
