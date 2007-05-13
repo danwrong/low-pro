@@ -76,7 +76,7 @@ DOM.Builder = {
 		  DOM.Builder.getElement(tag);
 		
 		for (var attr in attrs) {
-		  if (attr === true) attrs[attr] = attr;
+		  if (attrs[attr] === true) attrs[attr] = attr;
 		  if (typeof attrs[attr] != 'function') {
 		    if (isIE) this.ieAttrSet(attrs, attr, el);
 		    else el.setAttribute(attr, attrs[attr].toString());
@@ -116,5 +116,14 @@ DOM.Builder.fromHTML = function(html) {
 
 String.prototype.toElement = function() {
   return DOM.Builder.fromHTML(this);
+}
+
+new function() {
+  var old$ = $;
+  $ = function() {
+    for (var i = 0, el; el = arguments[i]; i++)
+      if (el.toElement && el.match(/^<(.+)>$/)) arguments[i] = el.toElement();
+    return old$.apply(this, arguments);
+  }
 }
 
