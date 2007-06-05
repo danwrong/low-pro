@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>TestSuite</title>
+	
+</head>
+
+<body>
+
+<table>
+  <tbody>
+    <tr>
+      <td>open</td>
+      <td>../test.html</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>assertAttribute</td>
+      <td>//p[@id='test1']/@class</td>
+      <td>boo</td>
+    </tr>
+    <tr>
+      <td>click</td>
+      <td>css=button</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>assertAlert</td>
+      <td>Test passed</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>click</td>
+      <td>stopme</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>click</td>
+      <td>css=.fing</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>assertAttribute</td>
+      <td>//ul[@id='test2']/li/@class</td>
+      <td>*bii*</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
