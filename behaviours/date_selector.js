@@ -8,12 +8,17 @@ DateSelector = Behavior.create({
   },
   setDate : function(value) {
     var parsed = Date.parse(value);
-    this.date = (isNaN(parsed)) ? new Date : new Date(parsed);
-    this.element.value = [
-      this.date.getFullYear(), 
-      this.date.getMonth() + 1,
-      this.date.getDate()
-    ].join('/');
+    if (!isNaN(parsed)) {
+      this.date = new Date(parsed);
+      this.element.value = [
+        this.date.getFullYear(), 
+        this.date.getMonth() + 1,
+        this.date.getDate()
+      ].join('/');
+    } else {
+      this.date = new Date;
+      this.element.value = '';
+    }
   }, 
   _createCalendar : function() {
     var calendar = $div({ 'class' : 'date_selector' });
@@ -24,10 +29,14 @@ DateSelector = Behavior.create({
       zIndex : '500',
       top : Position.cumulativeOffset(this.element)[1] + this.element.getHeight() + 'px',
       left : Position.cumulativeOffset(this.element)[0] + 'px'
-    })
+    });
+  },
+  onclick : function(e) {
+    this.calendar.show();
+    Event.stop(e);
   },
   onfocus : function(e) {
-    this.calendar.show();
+    this.onclick(e);
   }
 });
 
@@ -35,6 +44,7 @@ DateSelector.Calendar = Behavior.create({
   initialize : function(selector) {
     this.selector = selector;
     this.element.hide();
+    Event.observe(document, 'click', this.element.hide.bind(this.element));
   },
   show : function() {
     this._getDateFromSelector();
@@ -61,6 +71,7 @@ DateSelector.Calendar = Behavior.create({
   },
   onclick : function(e) {
     var source = Event.element(e);
+    Event.stop(e);
     
     if (source.hasClassName('day')) return this._setDate(source);
     if (source.hasClassName('back')) return this._backMonth();
@@ -80,7 +91,7 @@ DateSelector.Calendar = Behavior.create({
     this.redraw();
   },
   _getDateFromSelector : function() {
-    this.date = this.selector.date;
+    this.date = new Date(this.selector.date.getTime());
   },
   _firstDay : function(month, year) {
     return new Date(year, month, 1).getDay();
