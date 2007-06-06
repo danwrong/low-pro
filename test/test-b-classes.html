@@ -7,31 +7,39 @@
 
 	<title>test-b-classes</title>
 	
-	<script src="prototypeRC2.js" type="text/javascript" charset="utf-8"></script>
+	<script src="prototype.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lowpro.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../behaviours/date_selector.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" charset="utf-8">
-		Draggable = Behavior.create({
-			initialize : function(a, b) {
-				this.sum = a + b;
-			},
-			onclick : function() {
-				alert(this.sum);
-			}
-		})
-		
-		Event.onReady(function() {
-			new Draggable('thing', 5, 18);
-		})
-		
 		Event.addBehavior({
-			'#thig' : Draggable(15,10)
+			'.dates' : DateSelector
 		})
 	</script>
+	<style type="text/css" media="screen">
+	  .calendar {
+	    background: #DDD;
+	    padding: 5px;
+	    font-family: verdana, helvetica, sans-serif;
+	    font-size: 80%;
+	    cursor: pointer;
+	    width: 200px;
+	    border-collapse: collapse;
+	  }
+	  .calendar td {
+	    background: #FFF;
+	    border: 1px solid #DDD;
+	  }
+	  td.selected {
+	    color: red;
+	  }
+	</style>
 	
 </head>
 
 <body>
-<p id='thing'>Woo</p>
-<p id='thig'>Waa</p>
+<form action="#">
+  <p>Some inline stuff<br />more <input name="date" id="date" class="dates" /> and the other side as well.</p>
+  <p><label for="date2">Another</label> <input type="text" name="date2" id="date2" class="dates" /></p>
+</form>
 </body>
 </html>
