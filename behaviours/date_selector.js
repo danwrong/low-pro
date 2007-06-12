@@ -7,6 +7,7 @@ DateSelector = Behavior.create({
     this._createCalendar();
   },
   setDate : function(value) {
+    value = value.replace(new RegExp(this.options.seperator, 'g'), '/');
     var parsed = Date.parse(value);
     if (!isNaN(parsed)) {
       this.date = new Date(parsed);
@@ -14,7 +15,7 @@ DateSelector = Behavior.create({
         this.date.getFullYear(), 
         this.date.getMonth() + 1,
         this.date.getDate()
-      ].join('/');
+      ].join(this.options.seperator);
     } else {
       this.date = new Date;
       this.element.value = '';
@@ -59,9 +60,9 @@ DateSelector.Calendar = Behavior.create({
   redraw : function() {
     var html = '<table class="calendar">' +
                '  <thead>' +
-               '    <tr><th class="back">&lt;</th>' +
+               '    <tr><th class="back">&larr;</th>' +
                '        <th colspan="5" class="month_label">' + this._label() + '</th>' +
-               '        <th class="forward">&gt;</th></tr>' +
+               '        <th class="forward">&rarr;</th></tr>' +
                '    <tr class="day_header">' + this._dayRows() + '</tr>' +
                '  </thead>' +
                '  <tbody>';
@@ -78,9 +79,10 @@ DateSelector.Calendar = Behavior.create({
     if (source.hasClassName('forward')) return this._forwardMonth();
   },
   _setDate : function(source) {
-    source.addClassName('selected');
-    this.selector.setDate([this.date.getFullYear(), this.date.getMonth() + 1, source.innerHTML].join('/'));
-    this.element.hide();
+    if (source.innerHTML.strip() != '') {
+      this.selector.setDate([this.date.getFullYear(), this.date.getMonth() + 1, source.innerHTML].join('/'));
+      this.element.hide();
+    }
   },
   _backMonth : function() {
     this.date.setMonth(this.date.getMonth() - 1);
@@ -114,7 +116,7 @@ DateSelector.Calendar = Behavior.create({
     
     for (var i = 0, html = '<tr>'; i < 9; i++) {
       for (var j = 0; j <= 6; j++) {
-        html += '<td class="day' + this._selectedClass(year, month, day) + '">';
+        html += '<td class="day' + this._selectedClass(year, month, day) + ((j == 0 || j == 6) ? ' weekend' : '') + '">';
         if (day <= monthLength && (i > 0 || j >= firstDay)) 
           html += day++;
         html += '</td>';

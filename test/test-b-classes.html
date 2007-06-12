@@ -10,36 +10,51 @@
 	<script src="prototype.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lowpro.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../behaviours/date_selector.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../behaviours/remote.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" charset="utf-8">
 		Event.addBehavior({
-			'.dates' : DateSelector
+			'.dates' : DateSelector({ seperator : '-' }),
+			'.remote' : Remote.Link,
+			'.remote_form' : Remote.Form
 		})
 	</script>
 	<style type="text/css" media="screen">
 	  .calendar {
 	    background: #DDD;
-	    padding: 5px;
 	    font-family: verdana, helvetica, sans-serif;
 	    font-size: 80%;
 	    cursor: pointer;
 	    width: 200px;
 	    border-collapse: collapse;
-	  }
-	  .calendar td {
-	    background: #FFF;
 	    border: 1px solid #DDD;
 	  }
-	  td.selected {
-	    color: red;
+	  .calendar th {
+	    padding: 2px;
+	  }
+	  .calendar td {
+	    padding: 2px;
+	    background: #FFF;
+	    border: 1px solid #DDD;
+	    text-align: center;
+	  }
+	  .calendar td.selected {
+	    background: #AAA;
+	    color: #FFF;
+	    font-weight: bold;
+	  }
+	  td.weekend {
+	    background: #EEE;
 	  }
 	</style>
 	
 </head>
 
 <body>
-<form action="#">
+<form action="#" class="remote_form">
   <p>Some inline stuff<br />more <input name="date" id="date" class="dates" /> and the other side as well.</p>
   <p><label for="date2">Another</label> <input type="text" name="date2" id="date2" class="dates" /></p>
+  <p><a href="boo" class="remote">Thing</a></p>
+  <p><input type="submit" name="thing" value="thing" id="thing" /></p>
 </form>
 </body>
 </html>
