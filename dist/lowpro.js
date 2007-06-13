@@ -22,18 +22,15 @@ DOM = {
     $(element).parentNode.replaceChild(node, element);
     return node;
   },
+  prependChild : function(element, node) {
+    $(element).insertBefore(element.firstChild, node);
+  },
   appendChildren : function(element, children) {
     element = $(element);
     if (!(children instanceof Array))
       children = Array.prototype.slice.call(arguments, 1);
     children.each(function(child) { element.appendChild(child) });
     return children;
-  },
-  wrap : function(element, wrappingElement) {
-    element = $(element), wrappingElement = $(wrappingElement);
-    element.replaceElement(wrappingElement);
-    wrappingElement.appendChild(element);
-    return wrappingElement;
   }
 };
 
@@ -55,9 +52,10 @@ DOM.Builder = {
     else el.setAttribute(attr, attrs[attr]);
   },
   getElement : function(tag) {
-    var element;
-    if (element = DOM.Builder.cache[tag]) return element.cloneNode(false);
-    else return DOM.Builder.cache[tag] = document.createElement(tag);
+    var element = DOM.Builder.cache[tag];
+    if (element == null) 
+      element = DOM.Builder.cache[tag] = document.createElement(tag);
+    return element.cloneNode(false);
   },
 	tagFunc : function(tag) {
 	  return function() {
@@ -103,10 +101,10 @@ DOM.Builder = {
 // Automatically create node builders as $tagName.
 (function() { 
 	var els = ("p|div|span|strong|em|img|table|tr|td|th|thead|tbody|tfoot|pre|code|" + 
-				   "h1|h2|h3|h4|h5|h6|ul|ol|li|form|input|textarea|legend|fieldset|" + 
-				   "select|option|blockquote|cite|br|hr|dd|dl|dt|address|a|button|abbr|acronym|" +
-				   "script|link|style|bdo|ins|del|object|param|col|colgroup|optgroup|caption|" + 
-				   "label|dfn|kbd|samp|var").split("|");
+				     "h1|h2|h3|h4|h5|h6|ul|ol|li|form|input|textarea|legend|fieldset|" + 
+				     "select|option|blockquote|cite|br|hr|dd|dl|dt|address|a|button|abbr|acronym|" +
+				     "script|link|style|bdo|ins|del|object|param|col|colgroup|optgroup|caption|" + 
+				     "label|dfn|kbd|samp|var").split("|");
   var el, i=0;
 	while (el = els[i++]) 
 	  window['$' + el] = DOM.Builder.tagFunc(el);

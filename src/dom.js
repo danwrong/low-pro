@@ -46,9 +46,10 @@ DOM.Builder = {
     else el.setAttribute(attr, attrs[attr]);
   },
   getElement : function(tag) {
-    var element;
-    if (element = DOM.Builder.cache[tag]) return element.cloneNode(false);
-    else return DOM.Builder.cache[tag] = document.createElement(tag);
+    var element = DOM.Builder.cache[tag];
+    if (element == null) 
+      element = DOM.Builder.cache[tag] = document.createElement(tag);
+    return element.cloneNode(false);
   },
 	tagFunc : function(tag) {
 	  return function() {

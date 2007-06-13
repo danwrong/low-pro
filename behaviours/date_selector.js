@@ -23,14 +23,14 @@ DateSelector = Behavior.create({
   }, 
   _createCalendar : function() {
     var calendar = $div({ 'class' : 'date_selector' });
-    this.calendar = new DateSelector.Calendar(calendar, this);
-    this.element.addAfter(calendar);
+    document.body.appendChild(calendar);
     calendar.setStyle({
       position : 'absolute',
       zIndex : '500',
       top : Position.cumulativeOffset(this.element)[1] + this.element.getHeight() + 'px',
       left : Position.cumulativeOffset(this.element)[0] + 'px'
     });
+    this.calendar = new DateSelector.Calendar(calendar, this);
   },
   onclick : function(e) {
     this.calendar.show();
@@ -48,6 +48,7 @@ DateSelector.Calendar = Behavior.create({
     Event.observe(document, 'click', this.element.hide.bind(this.element));
   },
   show : function() {
+    DateSelector.Calendar.instances.invoke('hide');
     this._getDateFromSelector();
     this.redraw();
     this.element.show();
@@ -60,9 +61,9 @@ DateSelector.Calendar = Behavior.create({
   redraw : function() {
     var html = '<table class="calendar">' +
                '  <thead>' +
-               '    <tr><th class="back">&larr;</th>' +
+               '    <tr><th class="back"><a href="#">&larr;</a></th>' +
                '        <th colspan="5" class="month_label">' + this._label() + '</th>' +
-               '        <th class="forward">&rarr;</th></tr>' +
+               '        <th class="forward"><a href="#">&rarr;</a></th></tr>' +
                '    <tr class="day_header">' + this._dayRows() + '</tr>' +
                '  </thead>' +
                '  <tbody>';
@@ -74,9 +75,9 @@ DateSelector.Calendar = Behavior.create({
     var source = Event.element(e);
     Event.stop(e);
     
-    if (source.hasClassName('day')) return this._setDate(source);
-    if (source.hasClassName('back')) return this._backMonth();
-    if (source.hasClassName('forward')) return this._forwardMonth();
+    if (source.parentNode.hasClassName('day')) return this._setDate(source);
+    if (source.parentNode.hasClassName('back')) return this._backMonth();
+    if (source.parentNode.hasClassName('forward')) return this._forwardMonth();
   },
   _setDate : function(source) {
     if (source.innerHTML.strip() != '') {
@@ -87,10 +88,12 @@ DateSelector.Calendar = Behavior.create({
   _backMonth : function() {
     this.date.setMonth(this.date.getMonth() - 1);
     this.redraw();
+    return false;
   },
   _forwardMonth : function() {
     this.date.setMonth(this.date.getMonth() + 1);
     this.redraw();
+    return false;
   },
   _getDateFromSelector : function() {
     this.date = new Date(this.selector.date.getTime());
@@ -116,9 +119,10 @@ DateSelector.Calendar = Behavior.create({
     
     for (var i = 0, html = '<tr>'; i < 9; i++) {
       for (var j = 0; j <= 6; j++) {
-        html += '<td class="day' + this._selectedClass(year, month, day) + ((j == 0 || j == 6) ? ' weekend' : '') + '">';
+        html += '<td class="day' + 
+                this._selectedClass(year, month, day) + ((j == 0 || j == 6) ? ' weekend' : '') + '">';
         if (day <= monthLength && (i > 0 || j >= firstDay)) 
-          html += day++;
+          html += '<a href="#">' + day++ + '</td>';
         html += '</td>';
       }
       

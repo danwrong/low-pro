@@ -1,22 +1,32 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" debug="true">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<title>test-b-classes</title>
-	
+	<script src="firebug/firebug.js" type="text/javascript" charset="utf-8"></script>
 	<script src="prototype.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lowpro.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../behaviours/date_selector.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../behaviours/remote.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" charset="utf-8">
+	  Test = Behavior.create({
+  	  onclick : function() {
+  	    console.log(this.element);
+  	  }
+  	});
 		Event.addBehavior({
 			'.dates' : DateSelector({ seperator : '-' }),
 			'.remote' : Remote.Link,
 			'.remote_form' : Remote.Form
-		})
+		});
+		Event.onReady(function() {
+		  $$('.test').each(function(e) {
+		    new Test(e);
+		  })
+		});
 	</script>
 	<style type="text/css" media="screen">
 	  .calendar {
@@ -30,6 +40,10 @@
 	  }
 	  .calendar th {
 	    padding: 2px;
+	  }
+	  .calendar a {
+	    color : #000;
+	    text-decoration: none;
 	  }
 	  .calendar td {
 	    padding: 2px;
@@ -53,8 +67,12 @@
 <form action="#" class="remote_form">
   <p>Some inline stuff<br />more <input name="date" id="date" class="dates" /> and the other side as well.</p>
   <p><label for="date2">Another</label> <input type="text" name="date2" id="date2" class="dates" /></p>
+  <p><label for="date3">Another2</label> <input type="text" name="date3" id="date3" class="dates" /></p>
   <p><a href="boo" class="remote">Thing</a></p>
   <p><input type="submit" name="thing" value="thing" id="thing" /></p>
+  <button id='test1' class="test">B1</button>
+  <button id='test2' class="test">B2</button>
+  <button id='test3' class="test">B3</button>
 </form>
 </body>
 </html>
