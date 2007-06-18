@@ -2,7 +2,10 @@
 DOM = {
   insertAfter : function(element, node, otherNode) {
     element = $(element);
-    return element.insertBefore(node, otherNode.nextSibling);
+    if (otherNode.nextSibling)
+      return element.insertBefore(node, otherNode.nextSibling);
+    else
+      return element.appendChild(node);
   },
   addBefore : function(element, node) {
     element = $(element);

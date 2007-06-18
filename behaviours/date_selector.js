@@ -3,23 +3,15 @@ DateSelector = Behavior.create({
     this.element.addClassName('date_selector');
     this.calendar = null;
     this.options = Object.extend(DateSelector.DEFAULTS, options || {});
-    this.setDate($F(this.element));
+    this.date = this.getDate();
     this._createCalendar();
   },
   setDate : function(value) {
-    value = value.replace(new RegExp(this.options.seperator, 'g'), '/');
-    var parsed = Date.parse(value);
-    if (!isNaN(parsed)) {
-      this.date = new Date(parsed);
-      this.element.value = [
-        this.date.getFullYear(), 
-        this.date.getMonth() + 1,
-        this.date.getDate()
-      ].join(this.options.seperator);
-    } else {
-      this.date = new Date;
-      this.element.value = '';
-    }
+    this.date = value;
+    this.element.value = this.formatDate(this.date);
+    
+    if (this.calendar)
+      setTimeout(this.calendar.element.hide.bind(this.calendar.element), 500);
   }, 
   _createCalendar : function() {
     var calendar = $div({ 'class' : 'date_selector' });
@@ -30,7 +22,7 @@ DateSelector = Behavior.create({
       top : Position.cumulativeOffset(this.element)[1] + this.element.getHeight() + 'px',
       left : Position.cumulativeOffset(this.element)[0] + 'px'
     });
-    this.calendar = new DateSelector.Calendar(calendar, this);
+    this.calendar = new Calendar(calendar, this);
   },
   onclick : function(e) {
     this.calendar.show();
@@ -38,18 +30,33 @@ DateSelector = Behavior.create({
   },
   onfocus : function(e) {
     this.onclick(e);
+  },
+  formatDate : function(date) {
+    return [
+      date.getFullYear(), 
+      date.getMonth() + 1,
+      date.getDate()
+    ].join(this.options.seperator);
+  },
+  getDate : function() {
+    var value = this.element.value.replace(new RegExp(this.options.seperator, 'g'), '/');
+    var parsed = Date.parse(value), date = new Date;
+    
+    if (!isNaN(parsed)) date = new Date(parsed);
+  
+    return date;
   }
 });
 
-DateSelector.Calendar = Behavior.create({
+Calendar = Behavior.create({
   initialize : function(selector) {
     this.selector = selector;
     this.element.hide();
     Event.observe(document, 'click', this.element.hide.bind(this.element));
   },
   show : function() {
-    DateSelector.Calendar.instances.invoke('hide');
-    this._getDateFromSelector();
+    Calendar.instances.invoke('hide');
+    this.date = this.selector.getDate();
     this.redraw();
     this.element.show();
     this.active = true;
@@ -81,8 +88,10 @@ DateSelector.Calendar = Behavior.create({
   },
   _setDate : function(source) {
     if (source.innerHTML.strip() != '') {
-      this.selector.setDate([this.date.getFullYear(), this.date.getMonth() + 1, source.innerHTML].join('/'));
-      this.element.hide();
+      this.date.setDate(parseInt(source.innerHTML));
+      this.selector.setDate(this.date);
+      this.element.getElementsByClassName('selected').invoke('removeClassName', 'selected');
+      source.parentNode.addClassName('selected');
     }
   },
   _backMonth : function() {
@@ -102,14 +111,14 @@ DateSelector.Calendar = Behavior.create({
     return new Date(year, month, 1).getDay();
   },
   _monthLength : function(month, year) {
-    var length = DateSelector.Calendar.MONTHS[month].days;
+    var length = Calendar.MONTHS[month].days;
     return (month == 1 && (year % 4 == 0) && (year % 100 != 0)) ? 29 : length;
   },
   _label : function() {
-    return DateSelector.Calendar.MONTHS[this.date.getMonth()].label + ' ' + this.date.getFullYear();
+    return Calendar.MONTHS[this.date.getMonth()].label + ' ' + this.date.getFullYear();
   },
   _dayRows : function() {
-    for (var i = 0, html='', day; day = DateSelector.Calendar.DAYS[i]; i++)
+    for (var i = 0, html='', day; day = Calendar.DAYS[i]; i++)
       html += '<th>' + day + '</th>';
     return html;
   },
@@ -119,8 +128,12 @@ DateSelector.Calendar = Behavior.create({
     
     for (var i = 0, html = '<tr>'; i < 9; i++) {
       for (var j = 0; j <= 6; j++) {
-        html += '<td class="day' + 
-                this._selectedClass(year, month, day) + ((j == 0 || j == 6) ? ' weekend' : '') + '">';
+        var classes = ['day'];
+        
+        if (this._compareDate(new Date, year, month, day)) classes.push('today');
+        if (this._compareDate(this.selector.date, year, month, day)) classes.push('selected');
+          
+        html += '<td class="' + classes.join(' ') + '">';
         if (day <= monthLength && (i > 0 || j >= firstDay)) 
           html += '<a href="#">' + day++ + '</td>';
         html += '</td>';
@@ -132,10 +145,10 @@ DateSelector.Calendar = Behavior.create({
     
     return html + '</tr>';
   },
-  _selectedClass : function(year, month, day) {
-    return (this.selector.date.getFullYear() == year &&
-            this.selector.date.getMonth() == month &&
-            this.selector.date.getDate() == day) ? ' selected' : '';
+  _compareDate : function(date, year, month, day) {
+    return date.getFullYear() == year &&
+           date.getMonth() == month &&
+           date.getDate() == day;
   }
 });
 
@@ -143,7 +156,7 @@ DateSelector.DEFAULTS = {
   seperator : '/'
 }
 
-Object.extend(DateSelector.Calendar, {
+Object.extend(Calendar, {
   DAYS : $w('S M T W T F S'),
   MONTHS : [
     { label : 'January', days : 31 },
