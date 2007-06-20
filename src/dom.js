@@ -20,7 +20,7 @@ DOM = {
     return node;
   },
   prependChild : function(element, node) {
-    $(element).insertBefore(element.firstChild, node);
+    $(element).insertBefore(node, element.firstChild);
   },
   appendChildren : function(element, children) {
     element = $(element);
