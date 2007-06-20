@@ -1,3 +1,16 @@
+Form.Methods.serialize = function(form, getHash, buttonPressed) {
+  var elements = Form.getElements(form).reject(function(element) {
+    return ['submit', 'button', 'image'].include(element.type);
+  });
+  
+  if (buttonPressed || (buttonPressed = form.getElementsBySelector('*[type=submit]').first()))
+    elements.push(buttonPressed);
+  
+  return Form.serializeElements(elements, getHash);
+}
+
+Element.addMethods();
+
 Remote = {
   initialize : function(options) {
     this.options = Object.extend({
@@ -14,18 +27,26 @@ Remote = {
 Remote.Link = Behavior.create(Object.extend({
   onclick : function() {
     var options = Object.extend({ url : this.element.href, method : 'get' }, this.options);
-    return this._makeRequest();
+    return this._makeRequest(options);
   }
 }, Remote));
 
-// TODO: support serialization of submit button
 Remote.Form = Behavior.create(Object.extend({
+  onclick : function(e) {
+    var sourceElement = Event.element(e);
+    
+    if (sourceElement.nodeName.toLowerCase() == 'input' && 
+        sourceElement.type == 'submit')
+      this._submitButton = sourceElement;
+  },
   onsubmit : function() {
     var options = Object.extend({
       url : this.element.action,
       method : this.element.method,
-      parameters : Form.serialize(this.element)
+      parameters : Form.serialize(this.element, false, this._submitButton)
     }, this.options);
+    this._submitButton = null;
     return this._makeRequest(options);
   }
 }, Remote));
+
