@@ -116,15 +116,17 @@ Calendar = Behavior.create({
     
     for (var i = 0, html = '<tr>'; i < 9; i++) {
       for (var j = 0; j <= 6; j++) {
-        var classes = ['day'];
         
-        if (this._compareDate(new Date, year, month, day)) classes.push('today');
-        if (this._compareDate(this.selector.date, year, month, day)) classes.push('selected');
+        if (day <= monthLength && (i > 0 || j >= firstDay)) { 
+          var classes = ['day'];
           
-        html += '<td class="' + classes.join(' ') + '">';
-        if (day <= monthLength && (i > 0 || j >= firstDay)) 
-          html += '<a href="#">' + day++ + '</td>';
-        html += '</td>';
+          if (this._compareDate(new Date, year, month, day)) classes.push('today');
+          if (this._compareDate(this.selector.date, year, month, day)) classes.push('selected');
+          
+          html += '<td class="' + classes.join(' ') + '">';
+          html += '<a href="#">' + day++ + '</a>';
+          html += '</td>';
+        } else html += '<td></td>';
       }
       
       if (day > monthLength) break;
