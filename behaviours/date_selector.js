@@ -8,7 +8,7 @@ DateSelector = Behavior.create({
   },
   setDate : function(value) {
     this.date = value;
-    this.element.value = this.formatDate(this.date);
+    this.element.value = this.options.setter(this.date);
     
     if (this.calendar)
       setTimeout(this.calendar.element.hide.bind(this.calendar.element), 500);
@@ -31,20 +31,8 @@ DateSelector = Behavior.create({
   onfocus : function(e) {
     this.onclick(e);
   },
-  formatDate : function(date) {
-    return [
-      date.getFullYear(), 
-      date.getMonth() + 1,
-      date.getDate()
-    ].join(this.options.seperator);
-  },
   getDate : function() {
-    var value = this.element.value.replace(new RegExp(this.options.seperator, 'g'), '/');
-    var parsed = Date.parse(value), date = new Date;
-    
-    if (!isNaN(parsed)) date = new Date(parsed);
-  
-    return date;
+    return this.options.getter(this.element.value) || new Date;
   }
 });
 
@@ -153,7 +141,19 @@ Calendar = Behavior.create({
 });
 
 DateSelector.DEFAULTS = {
-  seperator : '/'
+  setter: function(date) {
+    return [
+      date.getFullYear(), 
+      date.getMonth() + 1,
+      date.getDate()
+    ].join('/');
+  },
+  getter: function(value) {
+    var parsed = Date.parse(value);
+    
+    if (!isNaN(parsed)) return new Date(parsed);
+    else return null;
+  }
 }
 
 Object.extend(Calendar, {
