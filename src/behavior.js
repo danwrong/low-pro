@@ -101,18 +101,18 @@ Behavior = {
   create : function(members) {
     var behavior = function() { 
       var behavior = arguments.callee;
-      if (this == window) {
+      if (this == window || $H(this).values().include(behavior)) {
         var args = [];
         for (var i = 0; i < arguments.length; i++) 
           args.push(arguments[i]);
           
-        return function(element) {
+        return function() {
           var initArgs = [this].concat(args);
           behavior.attach.apply(behavior, initArgs);
         };
       } else {
         var args = (arguments.length == 2 && arguments[1] instanceof Array) ? 
-                      arguments[1] : Array.prototype.slice.call(arguments, 1);
+                    arguments[1] : Array.prototype.slice.call(arguments, 1);
 
         this.element = $(arguments[0]);
         this.initialize.apply(this, args);

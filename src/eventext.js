@@ -11,8 +11,7 @@ if (typeof Element.Methods.observe == 'undefined') Element.addMethods({
 // Replace out existing event observe code with Dean Edwards' addEvent
 // http://dean.edwards.name/weblog/2005/10/add-event/
 Object.extend(Event, {
-  observe : function(el, type, func) {
-    el = $(el);
+  _observeAndCache : function(el, type, func) {
     if (!func.$$guid) func.$$guid = Event._guid++;
   	if (!el.events) el.events = {};
   	var handlers = el.events[type];
@@ -25,8 +24,8 @@ Object.extend(Event, {
   	handlers[func.$$guid] = func;
   	el["on" + type] = Event._handleEvent;
   	
-  	 if (!Event.observers) Event.observers = [];
-  	 Event.observers.push([el, type, func, false]);
+  	if (!Event.observers) Event.observers = [];
+  	Event.observers.push([el, type, func, false]);
 	},
 	stopObserving : function(el, type, func) {
 	  el = $(el);

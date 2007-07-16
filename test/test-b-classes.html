@@ -19,7 +19,7 @@
   	});
 		Event.addBehavior({
 			'.dates' : DateSelector({ seperator : '-' }),
-			'.remote' : Remote.Link,
+			'.remote' : Remote.Link({ onCreate: function() { console.log('sdsds') } }),
 			'.remote_form' : Remote.Form
 		});
 		Event.onReady(function() {

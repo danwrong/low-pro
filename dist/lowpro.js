@@ -198,8 +198,7 @@ if (typeof Element.Methods.observe == 'undefined') Element.addMethods({
 // Replace out existing event observe code with Dean Edwards' addEvent
 // http://dean.edwards.name/weblog/2005/10/add-event/
 Object.extend(Event, {
-  observe : function(el, type, func) {
-    el = $(el);
+  _observeAndCache : function(el, type, func) {
     if (!func.$$guid) func.$$guid = Event._guid++;
   	if (!el.events) el.events = {};
   	var handlers = el.events[type];
@@ -212,8 +211,8 @@ Object.extend(Event, {
   	handlers[func.$$guid] = func;
   	el["on" + type] = Event._handleEvent;
   	
-  	 if (!Event.observers) Event.observers = [];
-  	 Event.observers.push([el, type, func, false]);
+  	if (!Event.observers) Event.observers = [];
+  	Event.observers.push([el, type, func, false]);
 	},
 	stopObserving : function(el, type, func) {
 	  el = $(el);
@@ -362,18 +361,18 @@ Behavior = {
   create : function(members) {
     var behavior = function() { 
       var behavior = arguments.callee;
-      if (this == window) {
+      if (this == window || $H(this).values().include(behavior)) {
         var args = [];
         for (var i = 0; i < arguments.length; i++) 
           args.push(arguments[i]);
           
-        return function(element) {
+        return function() {
           var initArgs = [this].concat(args);
           behavior.attach.apply(behavior, initArgs);
         };
       } else {
         var args = (arguments.length == 2 && arguments[1] instanceof Array) ? 
-                      arguments[1] : Array.prototype.slice.call(arguments, 1);
+                    arguments[1] : Array.prototype.slice.call(arguments, 1);
 
         this.element = $(arguments[0]);
         this.initialize.apply(this, args);
