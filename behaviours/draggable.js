@@ -13,16 +13,16 @@ Draggable = Behavior.create({
     
     this.element.makePositioned();
       
-    this.startX = this.element.getStyle('left');
-    this.startY = this.element.getStyle('top');
+    this.startX = this.element.getStyle('left') || '0px';
+    this.startY = this.element.getStyle('top') || '0px';
     this.startZ = this.element.getStyle('z-index');
       
     Draggable.draggables.push(this);  
   },
   move : function(x, y) {
     this.element.setStyle({
-      left : parseInt(this.element.getStyle('left')) + x + this.options.units,
-      top : parseInt(this.element.getStyle('top')) + y + this.options.units
+      left : (parseInt(this.element.getStyle('left')) || 0) + x + this.options.units,
+      top : (parseInt(this.element.getStyle('top')) || 0) + y + this.options.units
     });
   },
   drag : function(e) {
@@ -59,8 +59,8 @@ Draggable = Behavior.create({
     this.element.style.zIndex = this.startZ;
   },
   bindDocumentEvents : function() {
-    document.onmousemove = this.drag.bind(this);
-    document.onmouseup = this.stop.bind(this);
+    document.onmousemove = this.drag.bindAsEventListener(this);
+    document.onmouseup = this.stop.bindAsEventListener(this);
   },
   unbindDocumentEvents : function() {
     document.onmousemove = document.onmouseup = null;
@@ -86,7 +86,7 @@ Draggable.targets = [];
 Draggable.DropTarget = Behavior.create({
   initialize : function(options) {
     this.options = Object.extend({
-      onDrop : Prototype.K,
+      onDrop : Prototype.K
     }, options || {});
     
     Draggable.targets.push(this);

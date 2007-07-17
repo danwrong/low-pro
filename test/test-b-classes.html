@@ -11,6 +11,7 @@
 	<script src="lowpro.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../behaviours/date_selector.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../behaviours/remote.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../behaviours/draggable.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" charset="utf-8">
   Test = Behavior.create({
         onclick : function() {
@@ -36,7 +37,7 @@
 	  Event.addBehavior({
 	    'a.remote': Test,
 	    'a.test': Test2,
-	    'form': Remote.Form
+	    'form': Draggable
 	  });
 	</script>
 	<style type="text/css" media="screen">
