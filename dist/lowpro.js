@@ -233,6 +233,7 @@ Object.extend(Event, {
     	el.$$handleEvent = handlers[i];
     	if (el.$$handleEvent(e) === false) returnValue = false;
     }
+    if (returnValue == false) e.preventDefault();
   	return returnValue;
   },
   _fixEvent : function(e) {
@@ -330,6 +331,9 @@ Object.extend(Event.addBehavior, {
 });
 
 Event.observe(window, 'unload', Event.addBehavior.unload.bind(Event.addBehavior));
+
+// A silly Prototype style shortcut for the reckless
+$$$ = Event.addBehavior;
 
 // Behaviors can be bound to elements to provide an object orientated way of controlling elements
 // and their behavior.  Use Behavior.create() to make a new behavior class then use attach() to

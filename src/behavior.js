@@ -71,6 +71,9 @@ Object.extend(Event.addBehavior, {
 
 Event.observe(window, 'unload', Event.addBehavior.unload.bind(Event.addBehavior));
 
+// A silly Prototype style shortcut for the reckless
+$$$ = Event.addBehavior;
+
 // Behaviors can be bound to elements to provide an object orientated way of controlling elements
 // and their behavior.  Use Behavior.create() to make a new behavior class then use attach() to
 // glue it to an element.  Each element then gets it's own instance of the behavior and any

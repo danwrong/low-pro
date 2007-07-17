@@ -12,21 +12,32 @@
 	<script src="../behaviours/date_selector.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../behaviours/remote.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" charset="utf-8">
-	  Test = Behavior.create({
-  	  onclick : function() {
-  	    console.log(this.element);
-  	  }
-  	});
-		Event.addBehavior({
-			'.dates' : DateSelector,
-			'.remote' : Remote.Link({ method: 'post' }),
-			'.remote_form' : Remote.Form
-		});
-		Event.onReady(function() {
-		  $$('.test').each(function(e) {
-		    new Test(e);
-		  })
-		});
+  Test = Behavior.create({
+        onclick : function() {
+          return false;
+        }
+       });
+       
+       Test2 = Behavior.create({
+             onclick : function() {
+               return false;
+             }
+            });
+  //     Event.addBehavior({
+	  //           '.dates' : DateSelector,
+	  //           '.remote' : Remote.Link({ method: 'post' }),
+	  //      '.remote_form' : Remote.Form
+	  //         });
+	  //     Event.onReady(function() {
+	  //       $$('.test').each(function(e) {
+	  //         new Test(e);
+	  //       })
+	  //     });
+	  Event.addBehavior({
+	    'a.remote': Test,
+	    'a.test': Test2,
+	    'form': Remote.Form
+	  });
 	</script>
 	<style type="text/css" media="screen">
 	  .calendar {
@@ -78,5 +89,7 @@
   <button id='test2' class="test" value="b2" name="test2">B2</button>
   <button id='test3' class="test" value="b3" name="test3">B3</button>
 </form>
+
+<a href="http://danwebb.net" class="test">Test</a>
 </body>
 </html>

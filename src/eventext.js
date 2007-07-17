@@ -46,6 +46,7 @@ Object.extend(Event, {
     	el.$$handleEvent = handlers[i];
     	if (el.$$handleEvent(e) === false) returnValue = false;
     }
+    if (returnValue == false) e.preventDefault();
   	return returnValue;
   },
   _fixEvent : function(e) {

@@ -70,9 +70,9 @@ Calendar = Behavior.create({
     var source = Event.element(e);
     Event.stop(e);
     
-    if (source.parentNode.hasClassName('day')) return this._setDate(source);
-    if (source.parentNode.hasClassName('back')) return this._backMonth();
-    if (source.parentNode.hasClassName('forward')) return this._forwardMonth();
+    if ($(source.parentNode).hasClassName('day')) return this._setDate(source);
+    if ($(source.parentNode).hasClassName('back')) return this._backMonth();
+    if ($(source.parentNode).hasClassName('forward')) return this._forwardMonth();
   },
   _setDate : function(source) {
     if (source.innerHTML.strip() != '') {
@@ -123,9 +123,9 @@ Calendar = Behavior.create({
           if (this._compareDate(new Date, year, month, day)) classes.push('today');
           if (this._compareDate(this.selector.date, year, month, day)) classes.push('selected');
           
-          html += '<td class="' + classes.join(' ') + '">';
-          html += '<a href="#">' + day++ + '</a>';
-          html += '</td>';
+          html += '<td class="' + classes.join(' ') + '">' + 
+                  '<a href="#">' + day++ + '</a>' + 
+                  '</td>';
         } else html += '<td></td>';
       }
       
@@ -174,4 +174,4 @@ Object.extend(Calendar, {
     { label : 'November', days : 30 },
     { label : 'December', days : 31 }
   ]
-})
+});
