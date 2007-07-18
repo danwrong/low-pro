@@ -11,6 +11,7 @@
 	<script src="lowpro.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../behaviours/date_selector.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../behaviours/remote.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../behaviours/observed.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../behaviours/draggable.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" charset="utf-8">
   Test = Behavior.create({
@@ -18,27 +19,18 @@
           return false;
         }
        });
-       
-       Test2 = Behavior.create({
-             onclick : function() {
-               return false;
-             }
-            });
-  //     Event.addBehavior({
-	  //           '.dates' : DateSelector,
-	  //           '.remote' : Remote.Link({ method: 'post' }),
-	  //      '.remote_form' : Remote.Form
-	  //         });
-	  //     Event.onReady(function() {
-	  //       $$('.test').each(function(e) {
-	  //         new Test(e);
-	  //       })
-	  //     });
-	  Event.addBehavior({
-	    'a.remote': Test,
-	    'a.test': Test2,
-	    'form': Draggable
-	  });
+      Event.addBehavior({
+        '.dates' : DateSelector,
+        '.remote' : Remote.Link({ method: 'post' }),
+        '.remote_form' : Remote.Form,
+        '.remote_form' : Observed(function() { console.log('changed') }, { frequency: 0.2 }),
+        '#date2': Observed(function() { console.log('changed field') }, { frequency: 0.2 })
+      });
+      Event.onReady(function() {
+        $$('.test').each(function(e) {
+          new Test(e);
+        })
+      });
 	</script>
 	<style type="text/css" media="screen">
 	  .calendar {

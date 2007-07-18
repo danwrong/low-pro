@@ -10,9 +10,9 @@ Licence: MIT
 Low Pro is a small JavaScript library built as an extension to Prototype that makes unobtrusive DOM scripting much easier.  Here's a rundown of the functionality:
 
 * Optimsed $$ - function for much fast CSS node selection.
-* Extended DOM Methods and DOM Builder - remove(), nextElement(), preciousElement() etc and $p('DOM Builder!') type stuff
+* Extended DOM Methods and DOM Builder - remove(), nextElement(), previousElement() etc and $p('DOM Builder!') type stuff
 * Event.onReady() - add callbacks that execute as soon as the DOM is ready.
-* Event.addBehavior() - add behaviors to elements declaritively using CSS selectors.
+* Event.addBehavior() - add behaviors to elements declaratively using CSS selectors.
 * Behavior object binding - If you prefer a more OO approach to behaviors Behavior.create() will create a behavior class that you can bind to elements.
 * $('element').observe() - event handling methods added to elements.
 * callback scope fixed for Event.observe - this always refers to the element in event handlers.
@@ -30,6 +30,5 @@ This library is based on the work of many great JavaScript programmers:
 
 Dean Edwards, John Resig and Matthias Miller: dom ready work and Dean's addEvent.
 Justin Palmer: event:Selectors which is the basis for addBehavior.
-Andrew Dupont: $$ optimisation.
 
 Cheers!
