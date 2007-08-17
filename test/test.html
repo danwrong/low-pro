@@ -7,7 +7,7 @@
 
 	<title>test</title>
 	<script src="firebug/firebug.js" type="text/javascript" charset="utf-8"></script>
-	<script src="prototype.js" type="text/javascript" charset="utf-8"></script>
+	<script src="prototype16rc0.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lowpro.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" charset="utf-8">
 		Event.onReady(function() {
@@ -50,12 +50,6 @@
 			'#stopme:click' : function(e) {
 				return false;
 			},
-			'#doomed:click' : function() {
-				this.addBefore($strong('YEAH, It worked.'));
-				var el = this;
-				setTimeout(function() { el.remove(); }, 500);
-				return false;
-			},
 			'#bung' : LinkBehavior(1),
 			'#drop' : function() {
 				this.appendChild($ul(
@@ -95,9 +89,6 @@
 <h2>Behavior Binding</h2>
 <p><a href="http://www.danwebb.net" id="bung">Click Me</a> and I should count your clicks.</p>
 
-
-<h2>DOM Methods</h2>
-<p><a href="http://www.danwebb.net" id="doomed">This link should be removed from the DOM when you click it and replaced with other content.</a></p>
 
 <h2>Creating DOM Structures</h2>
 <div id="drop">

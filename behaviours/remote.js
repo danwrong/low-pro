@@ -11,20 +11,25 @@ Form.Methods.serialize = function(form, getHash, buttonPressed) {
 
 Element.addMethods();
 
-Remote = {
-  Base: {
-    initialize : function(options) {
-      this.options = Object.extend({
-        evaluateScripts : true
-      }, options || {});
-    },
-    _makeRequest : function(options) {
-      if (options.update) new Ajax.Updater(options.update, options.url, options);
-      else new Ajax.Request(options.url, options);
-      return false;
-    }
+Remote = Behavior.create({
+  initialize: function(option) {
+    if (this.element.nodeName == 'FORM') new Remote.Link(this.element, options);
+    else new Remote.Form(this.element, options);
   }
-};
+});
+
+Remote.Base = {
+  initialize : function(options) {
+    this.options = Object.extend({
+      evaluateScripts : true
+    }, options || {});
+  },
+  _makeRequest : function(options) {
+    if (options.update) new Ajax.Updater(options.update, options.url, options);
+    else new Ajax.Request(options.url, options);
+    return false;
+  }
+}
 
 Remote.Link = Behavior.create({
   onclick : function() {

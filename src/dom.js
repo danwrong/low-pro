@@ -1,24 +1,5 @@
 // Simple utility methods for working with the DOM
 DOM = {
-  insertAfter : function(element, node, otherNode) {
-    element = $(element);
-    if (otherNode.nextSibling)
-      return element.insertBefore(node, otherNode.nextSibling);
-    else
-      return element.appendChild(node);
-  },
-  addBefore : function(element, node) {
-    element = $(element);
-    return element.parentNode.insertBefore(node, element);
-  },
-  addAfter : function(element, node) {
-    element = $(element);
-    return $(element.parentNode).insertAfter(node, element);
-  },
-  replaceElement : function(element, node) {
-    $(element).parentNode.replaceChild(node, element);
-    return node;
-  },
   prependChild : function(element, node) {
     $(element).insertBefore(node, element.firstChild);
   },
@@ -36,24 +17,6 @@ Element.addMethods(DOM);
 
 // DOMBuilder for prototype
 DOM.Builder = {
-  IE_TRANSLATIONS : {
-    'class' : 'className',
-    'for' : 'htmlFor'
-  },
-  cache: {},
-  ieAttrSet : function(attrs, attr, el) {
-    var trans;
-    if (trans = this.IE_TRANSLATIONS[attr]) el[trans] = attrs[attr];
-    else if (attr == 'style') el.style.cssText = attrs[attr];
-    else if (attr.match(/^on/)) el[attr] = new Function(attrs[attr]);
-    else el.setAttribute(attr, attrs[attr]);
-  },
-  getElement : function(tag) {
-    var element = DOM.Builder.cache[tag];
-    if (element == null) 
-      element = DOM.Builder.cache[tag] = document.createElement(tag);
-    return element.cloneNode(false);
-  },
 	tagFunc : function(tag) {
 	  return function() {
 	    var attrs, children; 
@@ -71,20 +34,7 @@ DOM.Builder = {
   },
 	create : function(tag, attrs, children) {
 		attrs = attrs || {}; children = children || []; tag = tag.toLowerCase();
-		var isIE = navigator.userAgent.match(/MSIE/);
-		var el = (isIE && attrs.name) ? 
-		  document.createElement("<" + tag + " name=" + attrs.name + ">") : 
-		  DOM.Builder.getElement(tag);
-		
-		for (var attr in attrs) {
-		  if (attrs[attr] === true) attrs[attr] = attr;
-		  if (typeof attrs[attr] != 'function') {
-		    if (isIE) this.ieAttrSet(attrs, attr, el);
-		    else el.setAttribute(attr, attrs[attr].toString());
-		  } else if (attr.match(/^on(.+)$/)) {
-		    Event.observe(el, RegExp.$1, attrs[attr]);
-		  };
-	  }
+		var el = new Element(tag, attrs);
 	  
 		for (var i=0; i<children.length; i++) {
 			if (typeof children[i] == 'string') 
@@ -118,13 +68,4 @@ DOM.Builder.fromHTML = function(html) {
 String.prototype.toElement = function() {
   return DOM.Builder.fromHTML(this);
 };
-
-(function() {
-  var old$ = $;
-  $ = function(element) {
-    if (element && element.toElement && element.match(/^<(.+)>$/)) 
-      return $(element.toElement());
-    return old$.apply(this, arguments);
-  }
-})();
 

@@ -105,9 +105,7 @@ Behavior = {
     var behavior = function() { 
       var behavior = arguments.callee;
       if (this == window || $H(this).values().include(behavior)) {
-        var args = [];
-        for (var i = 0; i < arguments.length; i++) 
-          args.push(arguments[i]);
+        var args = $A(arguments);
           
         return function() {
           var initArgs = [this].concat(args);
