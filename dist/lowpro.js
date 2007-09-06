@@ -71,10 +71,6 @@ DOM.Builder.fromHTML = function(html) {
   return root.childNodes[0];
 };
 
-String.prototype.toElement = function() {
-  return DOM.Builder.fromHTML(this);
-};
-
 
 
 // Wraps the 1.6 contentloaded event for backwards compatibility
