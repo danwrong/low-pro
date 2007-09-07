@@ -84,6 +84,17 @@ Object.extend(Event, {
   }
 });
 
+Event.observe = Event.observe.wrap(function(proceed, element, eventName, handler) {
+  var handler = handler.wrap(function(original, e) {
+    if (original(e) === false) e.stop();
+  });
+  
+  proceed(element, eventName, handler)
+});
+
+Element.addMethods({
+  observe: Event.observe
+});
 // Based on event:Selectors by Justin Palmer
 // http://encytemedia.com/event-selectors/
 //
