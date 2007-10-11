@@ -100,7 +100,7 @@ Calendar = Behavior.create({
   },
   _monthLength : function(month, year) {
     var length = Calendar.MONTHS[month].days;
-    return (month == 1 && (year % 4 == 0) && (year % 100 != 0)) ? 29 : length;
+    return (month == 1 && (year % 4 == 0) && ((year % 100 != 0) || (year % 400 == 0))) ? 29 : length;
   },
   _label : function() {
     return Calendar.MONTHS[this.date.getMonth()].label + ' ' + this.date.getFullYear();

@@ -15,8 +15,9 @@
 	<script src="../behaviours/draggable.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" charset="utf-8">
   Test = Behavior.create({
-        onclick : function() {
-          return false
+        onclick : function(e) {
+          console.log(e);
+          return false;
         }
        });
       Event.addBehavior({

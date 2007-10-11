@@ -1,14 +1,3 @@
-Event.observe = Event.observe.wrap(function(proceed, element, eventName, handler) {
-  var handler = handler.wrap(function(original, e) {
-    if (original(e) === false) e.stop();
-  });
-  
-  proceed(element, eventName, handler)
-});
-
-Element.addMethods({
-  observe: Event.observe
-});
 // Based on event:Selectors by Justin Palmer
 // http://encytemedia.com/event-selectors/
 //
@@ -83,7 +72,7 @@ Object.extend(Event.addBehavior, {
 Event.observe(window, 'unload', Event.addBehavior.unload.bind(Event.addBehavior));
 
 // A silly Prototype style shortcut for the reckless
-$$$ = Event.addBehavior;
+$$$ = Event.addBehavior.bind(Event);
 
 // Behaviors can be bound to elements to provide an object orientated way of controlling elements
 // and their behavior.  Use Behavior.create() to make a new behavior class then use attach() to

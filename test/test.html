@@ -16,6 +16,13 @@
 	
 		Event.onReady(function() {
 			$('test1').addClassName('boo');	
+			
+			var handler = function() {
+			  this.addClassName('boo');
+			}
+			
+			$('www').observe('click', handler);
+			$('www').stopObserving('click', handler);
 		});
 		
 		var LinkBehavior = Behavior.create({
@@ -94,5 +101,7 @@
 <div id="drop">
 	<p>You should see a dynamically created list below</p>
 </div>
+
+<div id="www">This should do nothing when clicked</div>
 </body>
 </html>
