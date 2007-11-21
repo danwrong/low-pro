@@ -1,19 +1,5 @@
 // Simple utility methods for working with the DOM
-DOM = {
-  prependChild : function(element, node) {
-    $(element).insertBefore(node, element.firstChild);
-  },
-  appendChildren : function(element, children) {
-    element = $(element);
-    if (!(children instanceof Array))
-      children = Array.prototype.slice.call(arguments, 1);
-    children.each(function(child) { element.appendChild(child) });
-    return children;
-  }
-};
-
-// Add them to the element mixin
-Element.addMethods(DOM);
+DOM = {};
 
 // DOMBuilder for prototype
 DOM.Builder = {

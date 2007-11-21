@@ -13,8 +13,8 @@ Element.addMethods();
 
 Remote = Behavior.create({
   initialize: function(option) {
-    if (this.element.nodeName == 'FORM') new Remote.Link(this.element, options);
-    else new Remote.Form(this.element, options);
+    if (this.element.nodeName == 'FORM') new Remote.Form(this.element, options);
+    else new Remote.Link(this.element, options);
   }
 });
 

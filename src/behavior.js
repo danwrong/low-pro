@@ -38,7 +38,7 @@ Object.extend(Event.addBehavior, {
   
   load : function(rules) {
     for (var selector in rules) {
-      var observer = rules[selector];
+      var observer = Event.addBehavior._wrapObserver(rules[selector]);
       var sels = selector.split(',');
       sels.each(function(sel) {
         var parts = sel.split(/:(?=[a-z]+$)/), css = parts[0], event = parts[1];
@@ -65,6 +65,12 @@ Object.extend(Event.addBehavior, {
       Event.stopObserving.apply(Event, c);
     });
     this.cache = [];
+  },
+  
+  _wrapObserver: function(observer) {
+    return function(event) {
+      if (observer.call(this, event) === false) event.stop(); 
+    }
   }
   
 });
@@ -134,7 +140,7 @@ Behavior = {
     _bindEvents : function(bound) {
       for (var member in bound)
         if (member.match(/^on(.+)/) && typeof bound[member] == 'function')
-          bound.element.observe(RegExp.$1, bound[member].bindAsEventListener(bound));
+          bound.element.observe(RegExp.$1, Event.addBehavior._wrapObserver(bound[member].bindAsEventListener(bound)));
     }
   }
 };

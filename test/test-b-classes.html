@@ -20,13 +20,17 @@
           return false;
         }
        });
+       
+       
       Event.addBehavior({
-        '.dates' : DateSelector,
+        '.date' : DateSelector,
         '.remote' : Remote.Link({ method: 'post' }),
         '.remote_form' : Remote.Form,
         '.remote_form' : Observed(function() { console.log('changed') }, { frequency: 0.2 }),
         '#date2': Observed(function() { console.log('changed field') }, { frequency: 0.2 })
       });
+      
+      
       Event.onReady(function() {
         $$('.test').each(function(e) {
           new Test(e);

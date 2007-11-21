@@ -1,25 +1,16 @@
 LowPro = {};
 LowPro.Version = '0.5';
+LowPro.CompatibleWithPrototype = '1.6.0';
+
+if (Prototype.Version != LowPro.CompatibleWithPrototype && console && console.warn)
+  console.warn("This version of Low Pro is tested with Prototype " + LowPro.CompatibleWithPrototype + 
+                  " it may not work as expected with this version (" + Prototype.Version + ")");
 
 if (!Element.addMethods) 
   Element.addMethods = function(o) { Object.extend(Element.Methods, o) };
 
 // Simple utility methods for working with the DOM
-DOM = {
-  prependChild : function(element, node) {
-    $(element).insertBefore(node, element.firstChild);
-  },
-  appendChildren : function(element, children) {
-    element = $(element);
-    if (!(children instanceof Array))
-      children = Array.prototype.slice.call(arguments, 1);
-    children.each(function(child) { element.appendChild(child) });
-    return children;
-  }
-};
-
-// Add them to the element mixin
-Element.addMethods(DOM);
+DOM = {};
 
 // DOMBuilder for prototype
 DOM.Builder = {
@@ -80,7 +71,7 @@ DOM.Builder.fromHTML = function(html) {
 // Event.onReady(callbackFunction);
 Object.extend(Event, {
   onReady : function(f) {
-    document.observe('contentloaded', f);
+    document.observe('dom:loaded', f);
   }
 });
 
@@ -124,7 +115,7 @@ Object.extend(Event.addBehavior, {
   
   load : function(rules) {
     for (var selector in rules) {
-      var observer = rules[selector];
+      var observer = Event.addBehavior._wrapObserver(rules[selector]);
       var sels = selector.split(',');
       sels.each(function(sel) {
         var parts = sel.split(/:(?=[a-z]+$)/), css = parts[0], event = parts[1];
@@ -151,6 +142,12 @@ Object.extend(Event.addBehavior, {
       Event.stopObserving.apply(Event, c);
     });
     this.cache = [];
+  },
+  
+  _wrapObserver: function(observer) {
+    return function(event) {
+      if (observer.call(this, event) === false) event.stop(); 
+    }
   }
   
 });
@@ -158,7 +155,7 @@ Object.extend(Event.addBehavior, {
 Event.observe(window, 'unload', Event.addBehavior.unload.bind(Event.addBehavior));
 
 // A silly Prototype style shortcut for the reckless
-$$$ = Event.addBehavior;
+$$$ = Event.addBehavior.bind(Event);
 
 // Behaviors can be bound to elements to provide an object orientated way of controlling elements
 // and their behavior.  Use Behavior.create() to make a new behavior class then use attach() to
@@ -220,7 +217,7 @@ Behavior = {
     _bindEvents : function(bound) {
       for (var member in bound)
         if (member.match(/^on(.+)/) && typeof bound[member] == 'function')
-          bound.element.observe(RegExp.$1, bound[member].bindAsEventListener(bound));
+          bound.element.observe(RegExp.$1, Event.addBehavior._wrapObserver(bound[member].bindAsEventListener(bound)));
     }
   }
 };

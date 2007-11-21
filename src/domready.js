@@ -5,6 +5,6 @@
 // Event.onReady(callbackFunction);
 Object.extend(Event, {
   onReady : function(f) {
-    document.observe('contentloaded', f);
+    document.observe('dom:loaded', f);
   }
 });
