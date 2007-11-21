@@ -110,17 +110,18 @@ Event.addBehavior = function(rules) {
 
 Object.extend(Event.addBehavior, {
   rules : {}, cache : [],
-  reassignAfterAjax : true,
+  reassignAfterAjax : false,
   autoTrigger : true,
   
   load : function(rules) {
     for (var selector in rules) {
-      var observer = Event.addBehavior._wrapObserver(rules[selector]);
+      var observer = rules[selector];
       var sels = selector.split(',');
       sels.each(function(sel) {
         var parts = sel.split(/:(?=[a-z]+$)/), css = parts[0], event = parts[1];
         $$(css).each(function(element) {
           if (event) {
+            observer = Event.addBehavior._wrapObserver(observer);
             $(element).observe(event, observer);
             Event.addBehavior.cache.push([element, event, observer]);
           } else {
@@ -183,34 +184,56 @@ $$$ = Event.addBehavior.bind(Event);
 //
 // Each behaviour has a collection of all its instances in Behavior.instances
 //
-Behavior = {
-  create : function(members) {
-    var behavior = function() { 
-      var behavior = arguments.callee;
-      if (this == window || $H(this).values().include(behavior)) {
-        var args = $A(arguments);
-          
-        return function() {
-          var initArgs = [this].concat(args);
-          behavior.attach.apply(behavior, initArgs);
-        };
-      } else {
-        var args = (arguments.length == 2 && arguments[1] instanceof Array) ? 
-                    arguments[1] : Array.prototype.slice.call(arguments, 1);
+var Behavior = {
+  create: function() {
+    var parent = null, properties = $A(arguments);
+    if (Object.isFunction(properties[0]))
+      parent = properties.shift();
 
-        this.element = $(arguments[0]);
-        this.initialize.apply(this, args);
-        behavior._bindEvents(this);
-        behavior.instances.push(this);
-      }
-    };
-    behavior.prototype.initialize = Prototype.K;
-    Object.extend(behavior.prototype, members);
-    Object.extend(behavior, Behavior.ClassMethods);
+      var behavior = function() { 
+        var behavior = arguments.callee;
+        if (!this.initialize) {
+          var args = $A(arguments);
+
+          return function() {
+            var initArgs = [this].concat(args);
+            behavior.attach.apply(behavior, initArgs);
+          };
+        } else {
+          var args = (arguments.length == 2 && arguments[1] instanceof Array) ? 
+                      arguments[1] : Array.prototype.slice.call(arguments, 1);
+
+          this.element = $(arguments[0]);
+          this.initialize.apply(this, args);
+          behavior._bindEvents(this);
+          behavior.instances.push(this);
+        }
+      };
+
+    Object.extend(behavior, Class.Methods);
+    Object.extend(behavior, Behavior.Methods);
+    behavior.superclass = parent;
+    behavior.subclasses = [];
     behavior.instances = [];
+
+    if (parent) {
+      var subclass = function() { };
+      subclass.prototype = parent.prototype;
+      behavior.prototype = new subclass;
+      parent.subclasses.push(behavior);
+    }
+
+    for (var i = 0; i < properties.length; i++)
+      behavior.addMethods(properties[i]);
+
+    if (!behavior.prototype.initialize)
+      behavior.prototype.initialize = Prototype.emptyFunction;
+
+    behavior.prototype.constructor = behavior;
+
     return behavior;
   },
-  ClassMethods : {
+  Methods : {
     attach : function(element) {
       return new this(element, Array.prototype.slice.call(arguments, 1));
     },
@@ -221,4 +244,70 @@ Behavior = {
     }
   }
 };
+
+Remote = Behavior.create({
+  initialize: function(options) {
+    if (this.element.nodeName == 'FORM') new Remote.Form(this.element, options);
+    else new Remote.Link(this.element, options);
+  }
+});
+
+Remote.Base = {
+  initialize : function(options) {
+    this.options = Object.extend({
+      evaluateScripts : true
+    }, options || {});
+  },
+  _makeRequest : function(options) {
+    if (options.update) new Ajax.Updater(options.update, options.url, options);
+    else new Ajax.Request(options.url, options);
+    return false;
+  }
+}
+
+Remote.Link = Behavior.create(Remote.Base, {
+  onclick : function() {
+    var options = Object.extend({ url : this.element.href, method : 'get' }, this.options);
+    return this._makeRequest(options);
+  }
+});
+
+
+Remote.Form = Behavior.create(Remote.Base, {
+  onclick : function(e) {
+    var sourceElement = e.element();
+    
+    if (sourceElement.nodeName.toLowerCase() == 'input' && 
+        sourceElement.type == 'submit')
+      this._submitButton = sourceElement;
+  },
+  onsubmit : function() {
+    var options = Object.extend({
+      url : this.element.action,
+      method : this.element.method || 'get',
+      parameters : this.element.serialize({ submit: this._submitButton.name })
+    }, this.options);
+    this._submitButton = null;
+    return this._makeRequest(options);
+  }
+});
+
+Observed = Behavior.create({
+  initialize : function(callback, options) {
+    this.callback = callback.bind(this);
+    this.options = options || {};
+    this.observer = (this.element.nodeName == 'FORM') ? this._observeForm() : this._observeField();
+  },
+  stop: function() {
+    this.observer.stop();
+  },
+  _observeForm: function() {
+    return (this.options.frequency) ? new Form.Observer(this.element, this.options.frequency, this.callback) :
+                                      new Form.EventObserver(this.element, this.callback);
+  },
+  _observeField: function() {
+    return (this.options.frequency) ? new Form.Element.Observer(this.element, this.options.frequency, this.callback) :
+                                      new Form.Element.EventObserver(this.element, this.callback);
+  }
+});
 

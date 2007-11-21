@@ -22,7 +22,7 @@ end
 DOC = ROOT + '/doc'
 LP_VERSION = get_version_string
 
-SOURCE_LIST = file_list SRC, 'lowpro.js', 'dom.js', 'domready.js', 'behavior.js'
+SOURCE_LIST = file_list SRC, 'lowpro.js', 'dom.js', 'domready.js', 'behavior.js', 'core_behaviors.js'
 
 DIST_LIST = file_list DIST, 'lowpro.js', 'README', 'LICENSE'
 

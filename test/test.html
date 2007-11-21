@@ -41,6 +41,13 @@
 			}
 		});
 		
+		var SuperLinkBehavior = Behavior.create(LinkBehavior, {
+		  onclick: function($super) {
+		    console.log('boo');
+		    return $super();
+		  }
+		});
+		
 		Event.addBehavior({
 			'.fing' : function() {
 				this.addClassName('boo');
@@ -57,7 +64,7 @@
 			'#stopme:click' : function(e) {
 				return false;
 			},
-			'#bung' : LinkBehavior(1),
+			'#bung' : SuperLinkBehavior(0),
 			'#drop' : function() {
 				this.appendChild($ul(
 					$li('item 1'),

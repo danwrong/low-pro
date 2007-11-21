@@ -7,11 +7,9 @@
 
 	<title>test-b-classes</title>
 	<script src="firebug/firebug.js" type="text/javascript" charset="utf-8"></script>
-	<script src="prototype16rc0.js" type="text/javascript" charset="utf-8"></script>
+	<script src="prototype16.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lowpro.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../behaviours/date_selector.js" type="text/javascript" charset="utf-8"></script>
-	<script src="../behaviours/remote.js" type="text/javascript" charset="utf-8"></script>
-	<script src="../behaviours/observed.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../behaviours/draggable.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" charset="utf-8">
   Test = Behavior.create({
@@ -23,10 +21,9 @@
        
        
       Event.addBehavior({
-        '.date' : DateSelector,
-        '.remote' : Remote.Link({ method: 'post' }),
-        '.remote_form' : Remote.Form,
-        '.remote_form' : Observed(function() { console.log('changed') }, { frequency: 0.2 }),
+        '.dates' : DateSelector,
+        '.remote' : Remote({ method: 'post' }),
+        '.remote_form' : Remote,
         '#date2': Observed(function() { console.log('changed field') }, { frequency: 0.2 })
       });
       
@@ -82,7 +79,7 @@
   <p><label for="date2">Another</label> <input type="text" name="date2" id="date2" class="dates" /></p>
   <p><label for="date3">Another2</label> <input type="text" name="date3" id="date3" class="dates" /></p>
   <p><a href="boo" class="remote">Thing</a></p>
-  <p><input type="submit" name="thing" value="thing" id="thing" /> <input type="submit" name="thing2" value="thing2" id="thing" /></p>
+  <p><input type="submit" name="thing" value="thing" id="thing" /> <input type="submit" name="thing2" value="thing2" id="thing2" /></p>
   <button id='test1' class="test" value="b1" name="test1">B1</button>
   <button id='test2' class="test" value="b2" name="test2">B2</button>
   <button id='test3' class="test" value="b3" name="test3">B3</button>
