@@ -19,7 +19,7 @@ Event.addBehavior = function(rules) {
     Ajax.Responders.register({
       onComplete : function() { 
         if (Event.addBehavior.reassignAfterAjax) 
-          setTimeout(function() { ab.unload(); ab.load(ab.rules) }, 10);
+          setTimeout(function() { ab.reload() }, 10);
       }
     });
     ab.responderApplied = true;
@@ -66,6 +66,12 @@ Object.extend(Event.addBehavior, {
       Event.stopObserving.apply(Event, c);
     });
     this.cache = [];
+  },
+  
+  reload: function() {
+    var ab = Event.addBehavior;
+    ab.unload(); 
+    ab.load(ab.rules);
   },
   
   _wrapObserver: function(observer) {
