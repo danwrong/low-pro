@@ -1,8 +1,8 @@
 LowPro = {};
 LowPro.Version = '0.5';
-LowPro.CompatibleWithPrototype = '1.6.0';
+LowPro.CompatibleWithPrototype = '1.6';
 
-if (Prototype.Version != LowPro.CompatibleWithPrototype && console && console.warn)
+if (Prototype.Version.indexOf(LowPro.CompatibleWithPrototype) == 0 && console && console.warn)
   console.warn("This version of Low Pro is tested with Prototype " + LowPro.CompatibleWithPrototype + 
                   " it may not work as expected with this version (" + Prototype.Version + ")");
 
@@ -119,7 +119,7 @@ Object.extend(Event.addBehavior, {
       var observer = rules[selector];
       var sels = selector.split(',');
       sels.each(function(sel) {
-        var parts = sel.split(/:(?=[a-z:]+$)/), css = parts.shift(), event = parts.join(':');
+        var parts = sel.split(/:(?=[a-z]+$)/), css = parts[0], event = parts[1];
         $$(css).each(function(element) {
           if (event) {
             observer = Event.addBehavior._wrapObserver(observer);

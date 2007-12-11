@@ -9,23 +9,23 @@ Licence: MIT
 
 Low Pro is a small JavaScript library built as an extension to Prototype that makes unobtrusive DOM scripting much easier.  Here's a rundown of the functionality:
 
-* Extended DOM Methods and DOM Builder
+* Prettier DOM Builder that wraps Prototype's new Element
 * Event.onReady() - add callbacks that execute as soon as the DOM is ready (now delegates to prototypes built in support for backward compatibility).
 * Event.addBehavior() - add behaviors to elements declaratively using CSS selectors.
 * Behavior object binding - If you prefer a more OO approach to behaviors Behavior.create() will create a behavior class that you can bind to elements.
 
+Compatible with Prototype 1.6
 Tested in: Firefox 1.5 (PC/Mac), Safari 2, IE 6+, Opera 9 (PC/Mac)
 
 Please mail any feedback to dan@danwebb.net
 
-MUST BE USED WITH PROTOTYPE 1.6 OR ABOVE
+
 
 Acknowledgments / Credits
 -------------------------
 
 This library is based on the work of many great JavaScript programmers:
 
-Dean Edwards, John Resig and Matthias Miller: dom ready work and Dean's addEvent.
 Justin Palmer: event:Selectors which is the basis for addBehavior.
 
 Cheers!
