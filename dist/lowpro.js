@@ -15,19 +15,19 @@ DOM = {};
 // DOMBuilder for prototype
 DOM.Builder = {
 	tagFunc : function(tag) {
-	  return function() {
-	    var attrs, children; 
-	    if (arguments.length>0) { 
-	      if (arguments[0].nodeName || 
-	        typeof arguments[0] == "string") 
-	        children = arguments; 
-	      else { 
-	        attrs = arguments[0]; 
-	        children = Array.prototype.slice.call(arguments, 1); 
-	      };
-	    }
-	    return DOM.Builder.create(tag, attrs, children);
-	  };
+    return function() {
+     var attrs, children;
+     if (arguments.length>0) {
+       if (arguments[0].constructor == Object) {
+         attrs = arguments[0];
+         children = Array.prototype.slice.call(arguments, 1);
+       } else {
+         children = arguments;
+       };
+       children = $A(children).flatten()
+     }
+     return DOM.Builder.create(tag, attrs, children);
+    };
   },
 	create : function(tag, attrs, children) {
 		attrs = attrs || {}; children = children || []; tag = tag.toLowerCase();
