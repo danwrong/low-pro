@@ -35,7 +35,7 @@ Event.delegate = function(rules) {
   return function(e) {
       var element = $(e.element());
       for (var selector in rules)
-        if (target.match(selector)) return rules[selector].apply(this, $A(arguments));
+        if (element.match(selector)) return rules[selector].apply(this, $A(arguments));
     }
 }
 

@@ -109,6 +109,14 @@ Event.addBehavior = function(rules) {
   
 };
 
+Event.delegate = function(rules) {
+  return function(e) {
+      var element = $(e.element());
+      for (var selector in rules)
+        if (element.match(selector)) return rules[selector].apply(this, $A(arguments));
+    }
+}
+
 Object.extend(Event.addBehavior, {
   rules : {}, cache : [],
   reassignAfterAjax : false,
@@ -252,6 +260,8 @@ var Behavior = {
   }
 };
 
+
+
 Remote = Behavior.create({
   initialize: function(options) {
     if (this.element.nodeName == 'FORM') new Remote.Form(this.element, options);
@@ -264,11 +274,19 @@ Remote.Base = {
     this.options = Object.extend({
       evaluateScripts : true
     }, options || {});
+    
+    this._bindCallbacks();
   },
   _makeRequest : function(options) {
     if (options.update) new Ajax.Updater(options.update, options.url, options);
     else new Ajax.Request(options.url, options);
     return false;
+  },
+  _bindCallbacks: function() {
+    $w('onCreate onComplete onException onFailure onInteractive onLoading onLoaded onSuccess').each(function(cb) {
+      if (Object.isFunction(this[cb.toLowercase()]))
+        this.options[cb] = this[cb.toLowercase()].bind(this);
+    }.bind(this));
   }
 }
 

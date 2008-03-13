@@ -2,7 +2,7 @@ LowPro = {};
 LowPro.Version = '0.5';
 LowPro.CompatibleWithPrototype = '1.6';
 
-if (Prototype.Version.indexOf(LowPro.CompatibleWithPrototype) == 0 && console && console.warn)
+if (Prototype.Version.indexOf(LowPro.CompatibleWithPrototype) != 0 && window.console && window.console.warn)
   console.warn("This version of Low Pro is tested with Prototype " + LowPro.CompatibleWithPrototype + 
                   " it may not work as expected with this version (" + Prototype.Version + ")");
 
@@ -15,19 +15,19 @@ DOM = {};
 // DOMBuilder for prototype
 DOM.Builder = {
 	tagFunc : function(tag) {
-	  return function() {
-	    var attrs, children; 
-	    if (arguments.length>0) { 
-	      if (arguments[0].nodeName || 
-	        typeof arguments[0] == "string") 
-	        children = arguments; 
-	      else { 
-	        attrs = arguments[0]; 
-	        children = Array.prototype.slice.call(arguments, 1); 
-	      };
-	    }
-	    return DOM.Builder.create(tag, attrs, children);
-	  };
+    return function() {
+     var attrs, children;
+     if (arguments.length>0) {
+       if (arguments[0].constructor == Object) {
+         attrs = arguments[0];
+         children = Array.prototype.slice.call(arguments, 1);
+       } else {
+         children = arguments;
+       };
+       children = $A(children).flatten()
+     }
+     return DOM.Builder.create(tag, attrs, children);
+    };
   },
 	create : function(tag, attrs, children) {
 		attrs = attrs || {}; children = children || []; tag = tag.toLowerCase();
@@ -108,6 +108,14 @@ Event.addBehavior = function(rules) {
   }
   
 };
+
+Event.delegate = function(rules) {
+  return function(e) {
+      var element = $(e.element());
+      for (var selector in rules)
+        if (element.match(selector)) return rules[selector].apply(this, $A(arguments));
+    }
+}
 
 Object.extend(Event.addBehavior, {
   rules : {}, cache : [],
@@ -252,6 +260,8 @@ var Behavior = {
   }
 };
 
+
+
 Remote = Behavior.create({
   initialize: function(options) {
     if (this.element.nodeName == 'FORM') new Remote.Form(this.element, options);
@@ -264,11 +274,19 @@ Remote.Base = {
     this.options = Object.extend({
       evaluateScripts : true
     }, options || {});
+    
+    this._bindCallbacks();
   },
   _makeRequest : function(options) {
     if (options.update) new Ajax.Updater(options.update, options.url, options);
     else new Ajax.Request(options.url, options);
     return false;
+  },
+  _bindCallbacks: function() {
+    $w('onCreate onComplete onException onFailure onInteractive onLoading onLoaded onSuccess').each(function(cb) {
+      if (Object.isFunction(this[cb.toLowercase()]))
+        this.options[cb] = this[cb.toLowercase()].bind(this);
+    }.bind(this));
   }
 }
 
