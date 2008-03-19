@@ -22,7 +22,7 @@
        
       Event.addBehavior({
         '.dates' : DateSelector,
-        '.remote' : Remote({ method: 'post' }),
+        '.remote' : Remote({ method: 'post', onCreate: function() { console.log(this) } }),
         '.remote_form' : Remote,
         '#date2': Observed(function() { console.log('changed field') }, { frequency: 0.2 })
       });

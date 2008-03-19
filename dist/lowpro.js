@@ -284,8 +284,8 @@ Remote.Base = {
   },
   _bindCallbacks: function() {
     $w('onCreate onComplete onException onFailure onInteractive onLoading onLoaded onSuccess').each(function(cb) {
-      if (Object.isFunction(this[cb.toLowercase()]))
-        this.options[cb] = this[cb.toLowercase()].bind(this);
+      if (Object.isFunction(this.options[cb]))
+        this.options[cb] = this.options[cb].bind(this);
     }.bind(this));
   }
 }
