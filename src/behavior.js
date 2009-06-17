@@ -175,9 +175,11 @@ var Behavior = {
       return new this(element, Array.prototype.slice.call(arguments, 1));
     },
     _bindEvents : function(bound) {
-      for (var member in bound)
-        if (member.match(/^on(.+)/) && typeof bound[member] == 'function')
-          bound.element.observe(RegExp.$1, Event.addBehavior._wrapObserver(bound[member].bindAsEventListener(bound)));
+      for (var member in bound) {
+        var matches = member.match(/^on(.+)/);
+        if (matches && typeof bound[member] == 'function')
+          bound.element.observe(matches[1], Event.addBehavior._wrapObserver(bound[member].bindAsEventListener(bound)));
+      }
     }
   }
 };
