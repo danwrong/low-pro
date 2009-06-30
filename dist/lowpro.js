@@ -130,9 +130,9 @@ Object.extend(Event.addBehavior, {
         var parts = sel.split(/:(?=[a-z]+$)/), css = parts[0], event = parts[1];
         $$(css).each(function(element) {
           if (event) {
-            observer = Event.addBehavior._wrapObserver(observer);
-            $(element).observe(event, observer);
-            Event.addBehavior.cache.push([element, event, observer]);
+            var wrappedObserver = Event.addBehavior._wrapObserver(observer);
+            $(element).observe(event, wrappedObserver);
+            Event.addBehavior.cache.push([element, event, wrappedObserver]);
           } else {
             if (!element.$$assigned || !element.$$assigned.include(observer)) {
               if (observer.attach) observer.attach(element);
@@ -206,7 +206,6 @@ var Behavior = {
       parent = properties.shift();
 
       var behavior = function() { 
-        var behavior = arguments.callee;
         if (!this.initialize) {
           var args = $A(arguments);
 
@@ -253,9 +252,11 @@ var Behavior = {
       return new this(element, Array.prototype.slice.call(arguments, 1));
     },
     _bindEvents : function(bound) {
-      for (var member in bound)
-        if (member.match(/^on(.+)/) && typeof bound[member] == 'function')
-          bound.element.observe(RegExp.$1, Event.addBehavior._wrapObserver(bound[member].bindAsEventListener(bound)));
+      for (var member in bound) {
+        var matches = member.match(/^on(.+)/);
+        if (matches && typeof bound[member] == 'function')
+          bound.element.observe(matches[1], Event.addBehavior._wrapObserver(bound[member].bindAsEventListener(bound)));
+      }
     }
   }
 };
