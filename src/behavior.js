@@ -33,10 +33,13 @@ Event.addBehavior = function(rules) {
 
 Event.delegate = function(rules) {
   return function(e) {
-      var element = $(e.element());
-      for (var selector in rules)
-        if (element.match(selector)) return rules[selector].apply(this, $A(arguments));
-    }
+		var element = $(e.element());
+		for ( var selector in rules ){
+			if ( element.match && element.match( selector ) ) {
+				return rules[selector].apply(this, $A(arguments));
+			}
+		}        
+	}
 }
 
 Object.extend(Event.addBehavior, {
