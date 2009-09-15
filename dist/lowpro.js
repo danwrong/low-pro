@@ -307,7 +307,7 @@ Remote.Form = Behavior.create(Remote.Base, {
     var sourceElement = e.element();
     
     if (['input', 'button'].include(sourceElement.nodeName.toLowerCase()) && 
-        sourceElement.type == 'submit')
+        ['submit', 'image'].include(sourceElement.type))
       this._submitButton = sourceElement;
   },
   onsubmit : function() {
